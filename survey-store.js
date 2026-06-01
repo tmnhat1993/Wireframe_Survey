@@ -39,6 +39,22 @@ function getDedupPhone(payload) {
   return payload.consentGiven && payload.participant?.phone ? payload.participant.phone : "";
 }
 
+function toHex(buffer) {
+  return Array.from(new Uint8Array(buffer))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function createPhoneDocumentId(phone) {
+  if (crypto.subtle) {
+    const bytes = new TextEncoder().encode(phone);
+    const digest = await crypto.subtle.digest("SHA-256", bytes);
+    return `phone_${toHex(digest)}`;
+  }
+
+  return `phone_${phone.replace(/\D/g, "")}`;
+}
+
 async function getFirebaseClient() {
   if (!hasFirebaseConfig()) {
     return null;
@@ -74,23 +90,15 @@ async function saveSurveyResponse(payload) {
     };
 
     if (dedupPhone) {
-      const existingSnapshot = await firestoreModule.getDocs(
-        firestoreModule.query(
-          responseCollection,
-          firestoreModule.where("participant.phone", "==", dedupPhone),
-          firestoreModule.limit(1)
-        )
-      );
+      const documentId = await createPhoneDocumentId(dedupPhone);
+      const docRef = firestoreModule.doc(responseCollection, documentId);
 
-      if (!existingSnapshot.empty) {
-        const existingDoc = existingSnapshot.docs[0];
-        await firestoreModule.setDoc(existingDoc.ref, {
-          ...firebaseRecord,
-          overwrittenAt: firestoreModule.serverTimestamp()
-        });
+      await firestoreModule.setDoc(docRef, {
+        ...firebaseRecord,
+        overwrittenAt: firestoreModule.serverTimestamp()
+      });
 
-        return { id: existingDoc.id, provider: "firebase", mode: "overwrite" };
-      }
+      return { id: documentId, provider: "firebase", mode: "overwrite" };
     }
 
     const docRef = await firestoreModule.addDoc(responseCollection, firebaseRecord);

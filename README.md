@@ -55,7 +55,7 @@ The repository includes `.github/workflows/pages.yml`. In GitHub:
 ## Data behavior
 
 - If the participant consents, the app stores `fullName` and normalized Vietnamese phone number.
-- If a consenting participant submits with a phone number that already exists, the old response is overwritten.
+- If a consenting participant submits with a phone number that already exists, the old response is overwritten by writing to a deterministic phone-hash document ID.
 - If the participant does not consent, the app stores an anonymous survey response and does not store personal information.
 - The survey only shows success after the response is saved.
 - After a browser completes the survey, the app stores a local completion marker and blocks retakes on reload.
