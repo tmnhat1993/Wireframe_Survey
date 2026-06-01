@@ -130,6 +130,24 @@ function canUseFallbackLogin(adminId, password) {
   return getStoreMode() === "local" && adminId === ADMIN_FALLBACK.id && password === ADMIN_FALLBACK.password;
 }
 
+function getFriendlyAuthError(error) {
+  const message = error.message || "";
+
+  if (message.includes("auth/configuration-not-found")) {
+    return "Firebase Authentication chưa được bật hoặc chưa bật Email/Password cho project này.";
+  }
+
+  if (message.includes("auth/invalid-credential") || message.includes("auth/user-not-found") || message.includes("auth/wrong-password")) {
+    return "Admin ID hoặc mật khẩu không đúng.";
+  }
+
+  if (message.includes("auth/invalid-email")) {
+    return "Admin ID cần là email hợp lệ khi dùng Firebase Auth.";
+  }
+
+  return error.message;
+}
+
 function flattenResponses() {
   return responses.map((response) => {
     const row = {
@@ -226,7 +244,7 @@ adminLogin.addEventListener("submit", async (event) => {
     adminContent.hidden = false;
     await loadResponses();
   } catch (error) {
-    adminLoginMessage.textContent = `Đăng nhập không thành công: ${error.message}`;
+    adminLoginMessage.textContent = `Đăng nhập không thành công: ${getFriendlyAuthError(error)}`;
   }
 });
 
