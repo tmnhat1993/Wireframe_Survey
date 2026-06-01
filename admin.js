@@ -11,7 +11,7 @@ const adminContent = document.querySelector("#admin-content");
 const metricTotal = document.querySelector("#metric-total");
 const metricConsent = document.querySelector("#metric-consent");
 const metricAnonymous = document.querySelector("#metric-anonymous");
-const statsTableBody = document.querySelector("#stats-table-body");
+const answerCharts = document.querySelector("#answer-charts");
 const participantsTableBody = document.querySelector("#participants-table-body");
 const refreshDataButton = document.querySelector("#refresh-data");
 const exportCsvButton = document.querySelector("#export-csv");
@@ -70,22 +70,40 @@ function renderMetrics() {
   metricAnonymous.textContent = responses.filter((response) => response.anonymous || !response.consentGiven).length;
 }
 
-function renderStatsTable() {
+function renderAnswerCharts() {
   const summary = summarizeAnswers(responses);
 
-  statsTableBody.innerHTML = QUESTIONS.flatMap((question) =>
-    question.options.map((option) => {
+  answerCharts.innerHTML = QUESTIONS.map((question, questionIndex) => {
+    const total = question.options.reduce((sum, option) => sum + (summary[question.id]?.[option.id] || 0), 0);
+    const rows = question.options
+      .map((option) => {
       const count = summary[question.id]?.[option.id] || 0;
+        const percent = total > 0 ? Math.round((count / total) * 100) : 0;
 
       return `
-        <tr>
-          <td>${escapeHtml(question.text)}</td>
-          <td>${escapeHtml(option.label)}</td>
-          <td>${count}</td>
-        </tr>
+          <div class="chart-row">
+            <div class="chart-row-label">
+              <span>${escapeHtml(option.label)}</span>
+              <strong>${count} (${percent}%)</strong>
+            </div>
+            <div class="chart-track" aria-hidden="true">
+              <span class="chart-bar chart-color-${questionIndex % 6}" style="width: ${percent}%"></span>
+            </div>
+          </div>
       `;
-    })
-  ).join("");
+      })
+      .join("");
+
+    return `
+      <article class="chart-card">
+        <div class="chart-card-header">
+          <h3>${escapeHtml(question.text)}</h3>
+          <span>${total} lượt trả lời</span>
+        </div>
+        <div class="chart-rows">${rows}</div>
+      </article>
+    `;
+  }).join("");
 }
 
 function renderParticipantsTable() {
@@ -110,7 +128,7 @@ function renderParticipantsTable() {
 
 function renderAdmin() {
   renderMetrics();
-  renderStatsTable();
+  renderAnswerCharts();
   renderParticipantsTable();
 }
 
