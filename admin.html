@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Survey Admin</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell admin-shell">
+      <a class="admin-link" href="./index.html">Survey</a>
+
+      <section class="screen is-active" aria-labelledby="admin-title">
+        <div class="screen-header">
+          <p class="eyebrow">Khu vực quản trị</p>
+          <h1 id="admin-title">Admin Survey</h1>
+        </div>
+
+        <form class="form-stack admin-login" id="admin-login" novalidate>
+          <label class="field">
+            <span>Admin ID</span>
+            <input id="admin-id" type="text" autocomplete="username" placeholder="admin" />
+          </label>
+
+          <label class="field">
+            <span>Mật khẩu</span>
+            <input id="admin-password" type="password" autocomplete="current-password" placeholder="••••••••" />
+          </label>
+
+          <p class="helper-text" id="admin-login-message">Demo local: dùng admin / admin123. Khi bật Firebase, nên dùng Firebase Auth.</p>
+          <button class="primary-button" type="submit">Đăng nhập</button>
+        </form>
+
+        <div class="admin-content" id="admin-content" hidden>
+          <div class="metric-grid">
+            <article>
+              <span>Tổng lượt tham gia</span>
+              <strong id="metric-total">0</strong>
+            </article>
+            <article>
+              <span>Đồng ý chia sẻ</span>
+              <strong id="metric-consent">0</strong>
+            </article>
+            <article>
+              <span>Ẩn danh</span>
+              <strong id="metric-anonymous">0</strong>
+            </article>
+          </div>
+
+          <div class="export-actions">
+            <button class="secondary-button" type="button" id="refresh-data">Tải lại</button>
+            <button class="secondary-button" type="button" id="export-csv">Export CSV</button>
+            <button class="primary-button" type="button" id="export-excel">Export Excel</button>
+          </div>
+
+          <section class="admin-section" aria-labelledby="stats-heading">
+            <h2 id="stats-heading">Thống kê câu trả lời</h2>
+            <div class="answer-charts" id="answer-charts"></div>
+          </section>
+
+          <section class="admin-section" aria-labelledby="participants-heading">
+            <h2 id="participants-heading">Danh sách người tham gia</h2>
+            <div class="table-frame">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Thời gian</th>
+                    <th>Họ tên</th>
+                    <th>SĐT</th>
+                    <th>Chia sẻ</th>
+                    <th>Trả lời</th>
+                  </tr>
+                </thead>
+                <tbody id="participants-table-body"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script src="./firebase-config.js"></script>
+    <script src="./questions.js"></script>
+    <script src="./survey-store.js"></script>
+    <script src="./admin.js"></script>
+  </body>
+</html>
