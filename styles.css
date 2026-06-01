@@ -27,6 +27,18 @@ button {
   cursor: pointer;
 }
 
+.inline-policy-button {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #1d4ed8;
+  font-weight: 700;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .app-shell {
   position: relative;
   width: min(100%, 430px);
