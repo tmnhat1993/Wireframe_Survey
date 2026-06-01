@@ -205,10 +205,11 @@ async function submitSurvey() {
 
   try {
     const result = await saveSurveyResponse(buildPayload());
+    const actionText = result.mode === "overwrite" ? "cập nhật" : "ghi nhận";
     successMessage.textContent =
       result.provider === "firebase"
-        ? "Khảo sát của bạn đã được ghi nhận thành công trên hệ thống."
-        : "Khảo sát của bạn đã được ghi nhận thành công ở chế độ local demo.";
+        ? `Khảo sát của bạn đã được ${actionText} thành công trên hệ thống.`
+        : `Khảo sát của bạn đã được ${actionText} thành công ở chế độ local demo.`;
     showRoute("thanks");
   } catch (error) {
     submitStatus.textContent = `Không thể ghi dữ liệu: ${error.message}`;
