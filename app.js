@@ -12,6 +12,8 @@ const phoneError = document.querySelector("#phone-error");
 const policyDialog = document.querySelector("#policy-dialog");
 const openPolicyButton = document.querySelector("#open-policy");
 const closePolicyButton = document.querySelector("#close-policy");
+const anonymousDialog = document.querySelector("#anonymous-dialog");
+const confirmAnonymousButton = document.querySelector("#confirm-anonymous");
 const questionList = document.querySelector("#question-list");
 const questionCounter = document.querySelector("#question-counter");
 const questionError = document.querySelector("#question-error");
@@ -108,6 +110,11 @@ function validateParticipant() {
   }
 
   return true;
+}
+
+function startQuiz() {
+  showQuestion(0);
+  showRoute("quiz");
 }
 
 function renderQuestions() {
@@ -240,8 +247,12 @@ participantForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
   if (validateParticipant()) {
-    showQuestion(0);
-    showRoute("quiz");
+    if (!consentInput.checked) {
+      anonymousDialog.showModal();
+      return;
+    }
+
+    startQuiz();
   }
 });
 
@@ -258,6 +269,11 @@ openPolicyButton.addEventListener("click", () => {
 
 closePolicyButton.addEventListener("click", () => {
   policyDialog.close();
+});
+
+confirmAnonymousButton.addEventListener("click", () => {
+  anonymousDialog.close();
+  startQuiz();
 });
 
 previousQuestionButton.addEventListener("click", () => {
