@@ -3,17 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mobile Survey Wireframe</title>
+    <title>Survey App</title>
+    <link rel="icon" href="data:," />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <main class="app-shell">
-      <nav class="top-nav" aria-label="Điều hướng wireframe">
-        <button class="nav-button is-active" data-route="info">Thông tin</button>
-        <button class="nav-button" data-route="quiz">Câu hỏi</button>
-        <button class="nav-button" data-route="thanks">Cảm ơn</button>
-        <button class="nav-button" data-route="stats">Thống kê</button>
-      </nav>
+      <a class="admin-link" href="./admin.html">Admin</a>
 
       <section class="screen is-active" id="screen-info" aria-labelledby="info-title">
         <div class="screen-header">
@@ -21,24 +17,28 @@
           <h1 id="info-title">Thông tin khách hàng</h1>
         </div>
 
-        <form class="form-stack">
+        <form class="form-stack" id="participant-form" novalidate>
           <label class="field">
             <span>Họ và tên</span>
-            <input type="text" placeholder="Nguyễn Văn A" />
+            <input id="full-name" name="fullName" type="text" autocomplete="name" placeholder="Nguyễn Văn A" />
+            <small class="field-error" id="full-name-error"></small>
           </label>
 
           <label class="field">
             <span>Số điện thoại</span>
-            <input type="tel" placeholder="0900 000 000" />
+            <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="0900 000 000" />
+            <small class="field-error" id="phone-error"></small>
           </label>
 
           <label class="checkbox-row">
-            <input type="checkbox" />
-            <span>Tôi đồng ý chia sẻ thông tin để tham gia chương trình khảo sát.</span>
+            <input id="consent" name="consent" type="checkbox" />
+            <span>Tôi đồng ý chia sẻ thông tin cá nhân để tham gia chương trình khảo sát.</span>
           </label>
 
+          <p class="helper-text">Nếu không đồng ý chia sẻ thông tin, bạn vẫn có thể làm khảo sát và kết quả sẽ được lưu dưới dạng ẩn danh.</p>
+
           <button class="secondary-button" type="button" id="open-policy">Xem quy định chia sẻ thông tin</button>
-          <button class="primary-button" type="button" data-route="quiz">Tiếp tục khảo sát</button>
+          <button class="primary-button" type="submit">Tiếp tục khảo sát</button>
         </form>
       </section>
 
@@ -52,59 +52,22 @@
           <span id="question-counter">Câu 1/6</span>
         </div>
 
-        <div class="question-list">
-          <article class="question-card is-active" data-question="0">
-            <h2>1. Bạn biết đến chương trình qua kênh nào?</h2>
-            <label><input type="radio" name="q1" /> Mạng xã hội</label>
-            <label><input type="radio" name="q1" /> Bạn bè giới thiệu</label>
-            <label><input type="radio" name="q1" /> Website</label>
-            <label><input type="radio" name="q1" /> Tại cửa hàng</label>
-          </article>
-
-          <article class="question-card" data-question="1">
-            <h2>2. Bạn đánh giá trải nghiệm tổng thể như thế nào?</h2>
-            <label><input type="radio" name="q2" /> Rất hài lòng</label>
-            <label><input type="radio" name="q2" /> Hài lòng</label>
-            <label><input type="radio" name="q2" /> Bình thường</label>
-            <label><input type="radio" name="q2" /> Chưa hài lòng</label>
-          </article>
-
-          <article class="question-card" data-question="2">
-            <h2>3. Nội dung chương trình có dễ hiểu không?</h2>
-            <label><input type="radio" name="q3" /> Rất dễ hiểu</label>
-            <label><input type="radio" name="q3" /> Dễ hiểu</label>
-            <label><input type="radio" name="q3" /> Cần rõ hơn</label>
-            <label><input type="radio" name="q3" /> Khó hiểu</label>
-          </article>
-
-          <article class="question-card" data-question="3">
-            <h2>4. Bạn quan tâm nhất đến yếu tố nào?</h2>
-            <label><input type="radio" name="q4" /> Quà tặng</label>
-            <label><input type="radio" name="q4" /> Ưu đãi</label>
-            <label><input type="radio" name="q4" /> Nội dung tư vấn</label>
-            <label><input type="radio" name="q4" /> Thời gian tham gia</label>
-          </article>
-
-          <article class="question-card" data-question="4">
-            <h2>5. Bạn có muốn nhận thông tin chương trình mới không?</h2>
-            <label><input type="radio" name="q5" /> Có, qua SMS</label>
-            <label><input type="radio" name="q5" /> Có, qua email</label>
-            <label><input type="radio" name="q5" /> Có, qua cuộc gọi</label>
-            <label><input type="radio" name="q5" /> Không</label>
-          </article>
-
-          <article class="question-card" data-question="5">
-            <h2>6. Khả năng bạn giới thiệu chương trình cho người khác?</h2>
-            <label><input type="radio" name="q6" /> Chắc chắn giới thiệu</label>
-            <label><input type="radio" name="q6" /> Có thể giới thiệu</label>
-            <label><input type="radio" name="q6" /> Chưa chắc</label>
-            <label><input type="radio" name="q6" /> Không giới thiệu</label>
-          </article>
-        </div>
+        <div class="question-list" id="question-list"></div>
+        <p class="field-error question-error" id="question-error"></p>
 
         <div class="sticky-actions">
           <button class="secondary-button" type="button" id="previous-question">Quay lại</button>
           <button class="primary-button" type="button" id="next-question">Tiếp theo</button>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-submit" aria-labelledby="submit-title">
+        <div class="center-panel">
+          <div class="loader" aria-hidden="true"></div>
+          <p class="eyebrow">Bước 3/3</p>
+          <h1 id="submit-title">Đang ghi nhận khảo sát</h1>
+          <p class="helper-text" id="submit-status">Vui lòng chờ trong giây lát.</p>
+          <button class="secondary-button" type="button" id="retry-submit" hidden>Thử gửi lại</button>
         </div>
       </section>
 
@@ -113,75 +76,26 @@
           <div class="status-mark">✓</div>
           <p class="eyebrow">Hoàn tất</p>
           <h1 id="thanks-title">Cảm ơn quý khách đã tham gia chương trình khảo sát của chúng tôi</h1>
-          <button class="primary-button" type="button" data-route="info">Thực hiện khảo sát mới</button>
-          <button class="secondary-button" type="button" data-route="stats">Xem thống kê</button>
-        </div>
-      </section>
-
-      <section class="screen" id="screen-stats" aria-labelledby="stats-title">
-        <div class="screen-header">
-          <p class="eyebrow">Khu vực quản trị</p>
-          <h1 id="stats-title">Thống kê kết quả quiz</h1>
-        </div>
-
-        <div class="stats-lock" id="stats-lock">
-          <label class="field">
-            <span>Mật khẩu xem thống kê</span>
-            <input type="password" id="password-input" placeholder="Nhập mật khẩu" />
-          </label>
-          <p class="helper-text">Wireframe demo: nhập <strong>admin123</strong> để mở thống kê.</p>
-          <button class="primary-button" type="button" id="unlock-stats">Xem thống kê</button>
-        </div>
-
-        <div class="stats-content" id="stats-content" hidden>
-          <div class="metric-grid">
-            <article>
-              <span>Tổng lượt tham gia</span>
-              <strong>128</strong>
-            </article>
-            <article>
-              <span>Tỉ lệ hoàn tất</span>
-              <strong>86%</strong>
-            </article>
-            <article>
-              <span>Câu trả lời phổ biến</span>
-              <strong>Hài lòng</strong>
-            </article>
-          </div>
-
-          <div class="table-frame" role="region" aria-label="Bảng thống kê mẫu">
-            <table>
-              <thead>
-                <tr>
-                  <th>Câu hỏi</th>
-                  <th>A</th>
-                  <th>B</th>
-                  <th>C</th>
-                  <th>D</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Câu 1</td><td>54</td><td>32</td><td>20</td><td>22</td></tr>
-                <tr><td>Câu 2</td><td>61</td><td>44</td><td>16</td><td>7</td></tr>
-                <tr><td>Câu 3</td><td>49</td><td>55</td><td>18</td><td>6</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="export-actions">
-            <button class="secondary-button" type="button">Export CSV</button>
-            <button class="primary-button" type="button">Export Excel</button>
-          </div>
+          <p class="helper-text" id="success-message">Khảo sát của bạn đã được ghi nhận thành công.</p>
+          <button class="primary-button" type="button" id="new-survey">Thực hiện khảo sát mới</button>
         </div>
       </section>
     </main>
 
     <dialog class="policy-dialog" id="policy-dialog" aria-labelledby="policy-title">
       <h2 id="policy-title">Quy định chia sẻ thông tin</h2>
-      <p>Thông tin khách hàng chỉ được sử dụng cho mục đích tổng hợp kết quả khảo sát và liên hệ chương trình khi khách hàng đồng ý.</p>
+      <div class="policy-copy">
+        <p>Thông tin cá nhân được thu thập nhằm xác nhận người tham gia, tổng hợp kết quả khảo sát, liên hệ khi cần thiết về chương trình và chăm sóc khách hàng theo phạm vi bạn đã đồng ý.</p>
+        <p>Thông tin có thể bao gồm họ tên, số điện thoại, thời điểm tham gia và câu trả lời khảo sát. Nếu bạn không đồng ý chia sẻ thông tin, hệ thống chỉ lưu kết quả khảo sát dưới dạng ẩn danh.</p>
+        <p>Dữ liệu được bảo mật, chỉ nhân sự hoặc đơn vị xử lý dữ liệu được ủy quyền mới được tiếp cận cho mục đích vận hành chương trình. Chúng tôi không bán hoặc chia sẻ thông tin cho bên thứ ba nếu không có sự đồng ý của bạn hoặc yêu cầu hợp pháp của cơ quan có thẩm quyền.</p>
+        <p>Bạn có quyền yêu cầu kiểm tra, cập nhật, rút lại đồng ý hoặc xóa thông tin cá nhân theo quy định pháp luật Việt Nam về bảo vệ dữ liệu cá nhân.</p>
+      </div>
       <button class="primary-button" type="button" id="close-policy">Đã hiểu</button>
     </dialog>
 
+    <script src="./firebase-config.js"></script>
+    <script src="./questions.js"></script>
+    <script src="./survey-store.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>
