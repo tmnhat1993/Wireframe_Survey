@@ -15,7 +15,6 @@ const answerCharts = document.querySelector("#answer-charts");
 const participantsTableBody = document.querySelector("#participants-table-body");
 const refreshDataButton = document.querySelector("#refresh-data");
 const exportCsvButton = document.querySelector("#export-csv");
-const exportExcelButton = document.querySelector("#export-excel");
 
 let responses = [];
 
@@ -210,30 +209,6 @@ function exportCsv() {
   downloadFile("survey-responses.csv", `\uFEFF${csv}`, "text/csv;charset=utf-8");
 }
 
-function exportExcel() {
-  const rows = flattenResponses();
-  const headers = ["id", "createdAt", "consentGiven", "anonymous", "fullName", "phone", ...QUESTIONS.map((question) => getQuestionText(question.id))];
-  const body = rows
-    .map((row) => {
-      const values = ["id", "createdAt", "consentGiven", "anonymous", "fullName", "phone", ...QUESTIONS.map((question) => question.id)];
-      return `<tr>${values.map((key) => `<td>${escapeHtml(row[key])}</td>`).join("")}</tr>`;
-    })
-    .join("");
-  const html = `
-    <html>
-      <head><meta charset="UTF-8" /></head>
-      <body>
-        <table>
-          <thead><tr>${headers.map((header) => `<th>${escapeHtml(header)}</th>`).join("")}</tr></thead>
-          <tbody>${body}</tbody>
-        </table>
-      </body>
-    </html>
-  `;
-
-  downloadFile("survey-responses.xls", html, "application/vnd.ms-excel;charset=utf-8");
-}
-
 adminLogin.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -268,5 +243,4 @@ adminLogin.addEventListener("submit", async (event) => {
 
 refreshDataButton.addEventListener("click", loadResponses);
 exportCsvButton.addEventListener("click", exportCsv);
-exportExcelButton.addEventListener("click", exportExcel);
 })();

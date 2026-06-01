@@ -5,7 +5,7 @@ Static survey app deployable on GitHub Pages.
 ## Files
 
 - `index.html`: participant survey flow.
-- `admin.html`: admin login, response list, answer statistics, CSV/Excel export.
+- `admin.html`: admin login, response list, answer statistics, CSV export.
 - `firebase-config.js`: Firebase web config and local demo admin fallback.
 - `firestore.rules`: sample Firestore rules.
 
@@ -60,4 +60,4 @@ The repository includes `.github/workflows/pages.yml`. In GitHub:
 - The survey only shows success after the response is saved.
 - After a browser completes the survey, the app stores a local completion marker and blocks retakes on reload.
 - Desktop debug mode can be enabled from the bottom-left checkbox to allow repeated survey testing.
-- Admin can view participants, answer counts, and export CSV or Excel-compatible `.xls`.
+- Admin can view participants, answer counts, and export CSV.
