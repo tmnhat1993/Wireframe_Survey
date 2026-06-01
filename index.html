@@ -10,6 +10,10 @@
   <body>
     <main class="app-shell">
       <a class="admin-link" href="./admin.html">Admin</a>
+      <label class="debug-toggle">
+        <input id="debug-mode" type="checkbox" />
+        <span>Debug mode</span>
+      </label>
 
       <section class="screen is-active" id="screen-info" aria-labelledby="info-title">
         <div class="screen-header">
@@ -76,7 +80,7 @@
           <div class="status-mark">✓</div>
           <h1 id="thanks-title">Cảm ơn quý khách đã tham gia chương trình khảo sát của chúng tôi</h1>
           <p class="helper-text" id="success-message">Khảo sát của bạn đã được ghi nhận thành công.</p>
-          <button class="primary-button" type="button" id="new-survey">Thực hiện khảo sát mới</button>
+          <button class="primary-button" type="button" id="new-survey" hidden>Thực hiện khảo sát mới</button>
         </div>
       </section>
     </main>
