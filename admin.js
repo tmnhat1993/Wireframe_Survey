@@ -20,9 +20,14 @@ const filterStartDateInput = document.querySelector("#filter-start-date");
 const filterEndDateInput = document.querySelector("#filter-end-date");
 const clearDateFilterButton = document.querySelector("#clear-date-filter");
 const filterSummary = document.querySelector("#filter-summary");
+const participantsPrevPageButton = document.querySelector("#participants-prev-page");
+const participantsNextPageButton = document.querySelector("#participants-next-page");
+const participantsPageSummary = document.querySelector("#participants-page-summary");
 
 let allResponses = [];
 let filteredResponses = [];
+let currentParticipantsPage = 1;
+const PARTICIPANTS_PAGE_SIZE = 10;
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -116,6 +121,7 @@ function applyDateFilter() {
   const endDate = parseFilterEnd(filterEndDateInput.value);
 
   filteredResponses = allResponses.filter((response) => isWithinDateRange(response, startDate, endDate));
+  currentParticipantsPage = 1;
   renderAdmin();
 }
 
@@ -185,7 +191,13 @@ function renderAnswerCharts() {
 }
 
 function renderParticipantsTable() {
-  participantsTableBody.innerHTML = filteredResponses.map((response) => {
+  const pageCount = Math.max(1, Math.ceil(filteredResponses.length / PARTICIPANTS_PAGE_SIZE));
+  currentParticipantsPage = Math.min(Math.max(currentParticipantsPage, 1), pageCount);
+
+  const startIndex = (currentParticipantsPage - 1) * PARTICIPANTS_PAGE_SIZE;
+  const pageResponses = filteredResponses.slice(startIndex, startIndex + PARTICIPANTS_PAGE_SIZE);
+
+  participantsTableBody.innerHTML = pageResponses.map((response) => {
     const participant = response.participant || {};
     const answerLabels = QUESTIONS.map((question) => {
       const optionId = response.answers?.[question.id];
@@ -202,6 +214,20 @@ function renderParticipantsTable() {
       </tr>
     `;
   }).join("");
+
+  if (!pageResponses.length) {
+    participantsTableBody.innerHTML = `
+      <tr>
+        <td colspan="5">Không có dữ liệu trong phạm vi lọc.</td>
+      </tr>
+    `;
+  }
+
+  const firstItem = filteredResponses.length ? startIndex + 1 : 0;
+  const lastItem = Math.min(startIndex + pageResponses.length, filteredResponses.length);
+  participantsPageSummary.textContent = `Trang ${currentParticipantsPage}/${pageCount} · ${firstItem}-${lastItem}/${filteredResponses.length}`;
+  participantsPrevPageButton.disabled = currentParticipantsPage <= 1;
+  participantsNextPageButton.disabled = currentParticipantsPage >= pageCount;
 }
 
 function renderAdmin() {
@@ -324,6 +350,16 @@ adminLogin.addEventListener("submit", async (event) => {
 
 refreshDataButton.addEventListener("click", loadResponses);
 exportCsvButton.addEventListener("click", exportCsv);
+
+participantsPrevPageButton.addEventListener("click", () => {
+  currentParticipantsPage -= 1;
+  renderParticipantsTable();
+});
+
+participantsNextPageButton.addEventListener("click", () => {
+  currentParticipantsPage += 1;
+  renderParticipantsTable();
+});
 
 dateFilterForm.addEventListener("submit", (event) => {
   event.preventDefault();
