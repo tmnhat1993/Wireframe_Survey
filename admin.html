@@ -53,6 +53,22 @@
             <button class="primary-button" type="button" id="export-csv">Export CSV</button>
           </div>
 
+          <form class="filter-panel" id="date-filter-form">
+            <label class="field">
+              <span>Ngày bắt đầu</span>
+              <input id="filter-start-date" type="date" />
+            </label>
+            <label class="field">
+              <span>Ngày kết thúc</span>
+              <input id="filter-end-date" type="date" />
+            </label>
+            <div class="filter-actions">
+              <button class="secondary-button" type="button" id="clear-date-filter">Xóa lọc</button>
+              <button class="primary-button" type="submit">Áp dụng</button>
+            </div>
+            <p class="helper-text" id="filter-summary">Đang hiển thị tất cả dữ liệu.</p>
+          </form>
+
           <section class="admin-section" aria-labelledby="stats-heading">
             <h2 id="stats-heading">Thống kê câu trả lời</h2>
             <div class="answer-charts" id="answer-charts"></div>
@@ -64,7 +80,7 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Thời gian</th>
+                    <th>Thời gian submit</th>
                     <th>Họ tên</th>
                     <th>SĐT</th>
                     <th>Chia sẻ</th>

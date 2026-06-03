@@ -210,6 +210,7 @@ function buildPayload() {
   const { fullName, phone, consentGiven } = surveyState.participant;
 
   return {
+    submittedAt: new Date().toISOString(),
     consentGiven,
     anonymous: !consentGiven,
     participant: consentGiven ? { fullName, phone } : null,

@@ -410,6 +410,21 @@ th {
   gap: 10px;
 }
 
+.filter-panel {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #d2d9e4;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.filter-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
 .policy-dialog {
   width: min(calc(100% - 32px), 390px);
   padding: 20px;

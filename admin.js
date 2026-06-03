@@ -15,8 +15,14 @@ const answerCharts = document.querySelector("#answer-charts");
 const participantsTableBody = document.querySelector("#participants-table-body");
 const refreshDataButton = document.querySelector("#refresh-data");
 const exportCsvButton = document.querySelector("#export-csv");
+const dateFilterForm = document.querySelector("#date-filter-form");
+const filterStartDateInput = document.querySelector("#filter-start-date");
+const filterEndDateInput = document.querySelector("#filter-end-date");
+const clearDateFilterButton = document.querySelector("#clear-date-filter");
+const filterSummary = document.querySelector("#filter-summary");
 
-let responses = [];
+let allResponses = [];
+let filteredResponses = [];
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -38,6 +44,79 @@ function formatDate(value) {
   }
 
   return date.toLocaleString("vi-VN");
+}
+
+function getResponseSubmittedAt(response) {
+  return response.submittedAt || response.createdAt || "";
+}
+
+function parseFilterStart(value) {
+  if (!value) {
+    return null;
+  }
+
+  return new Date(`${value}T00:00:00`);
+}
+
+function parseFilterEnd(value) {
+  if (!value) {
+    return null;
+  }
+
+  return new Date(`${value}T23:59:59.999`);
+}
+
+function isWithinDateRange(response, startDate, endDate) {
+  const submittedAt = getResponseSubmittedAt(response);
+  const submittedDate = new Date(submittedAt);
+
+  if (!submittedAt || Number.isNaN(submittedDate.getTime())) {
+    return false;
+  }
+
+  if (startDate && submittedDate < startDate) {
+    return false;
+  }
+
+  if (endDate && submittedDate > endDate) {
+    return false;
+  }
+
+  return true;
+}
+
+function formatFilterDate(value) {
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(`${value}T00:00:00`);
+  return date.toLocaleDateString("vi-VN");
+}
+
+function updateFilterSummary() {
+  const startDateText = formatFilterDate(filterStartDateInput.value);
+  const endDateText = formatFilterDate(filterEndDateInput.value);
+
+  if (!filterStartDateInput.value && !filterEndDateInput.value) {
+    filterSummary.textContent = `Đang hiển thị tất cả ${filteredResponses.length} bản ghi.`;
+    return;
+  }
+
+  const rangeText = [
+    startDateText ? `từ 00:00:00 ${startDateText}` : "",
+    endDateText ? `đến 23:59:59 ${endDateText}` : ""
+  ].filter(Boolean).join(" ");
+
+  filterSummary.textContent = `Đang hiển thị ${filteredResponses.length}/${allResponses.length} bản ghi ${rangeText}.`;
+}
+
+function applyDateFilter() {
+  const startDate = parseFilterStart(filterStartDateInput.value);
+  const endDate = parseFilterEnd(filterEndDateInput.value);
+
+  filteredResponses = allResponses.filter((response) => isWithinDateRange(response, startDate, endDate));
+  renderAdmin();
 }
 
 function summarizeAnswers(items) {
@@ -64,13 +143,13 @@ function summarizeAnswers(items) {
 }
 
 function renderMetrics() {
-  metricTotal.textContent = responses.length;
-  metricConsent.textContent = responses.filter((response) => response.consentGiven).length;
-  metricAnonymous.textContent = responses.filter((response) => response.anonymous || !response.consentGiven).length;
+  metricTotal.textContent = filteredResponses.length;
+  metricConsent.textContent = filteredResponses.filter((response) => response.consentGiven).length;
+  metricAnonymous.textContent = filteredResponses.filter((response) => response.anonymous || !response.consentGiven).length;
 }
 
 function renderAnswerCharts() {
-  const summary = summarizeAnswers(responses);
+  const summary = summarizeAnswers(filteredResponses);
 
   answerCharts.innerHTML = QUESTIONS.map((question, questionIndex) => {
     const total = question.options.reduce((sum, option) => sum + (summary[question.id]?.[option.id] || 0), 0);
@@ -106,7 +185,7 @@ function renderAnswerCharts() {
 }
 
 function renderParticipantsTable() {
-  participantsTableBody.innerHTML = responses.map((response) => {
+  participantsTableBody.innerHTML = filteredResponses.map((response) => {
     const participant = response.participant || {};
     const answerLabels = QUESTIONS.map((question) => {
       const optionId = response.answers?.[question.id];
@@ -115,7 +194,7 @@ function renderParticipantsTable() {
 
     return `
       <tr>
-        <td>${escapeHtml(formatDate(response.createdAt))}</td>
+        <td>${escapeHtml(formatDate(getResponseSubmittedAt(response)))}</td>
         <td>${escapeHtml(participant.fullName || "Ẩn danh")}</td>
         <td>${escapeHtml(participant.phone || "")}</td>
         <td>${response.consentGiven ? "Có" : "Không"}</td>
@@ -129,15 +208,16 @@ function renderAdmin() {
   renderMetrics();
   renderAnswerCharts();
   renderParticipantsTable();
+  updateFilterSummary();
 }
 
 async function loadResponses() {
   adminLoginMessage.textContent = "Đang tải dữ liệu...";
 
   try {
-    responses = await listSurveyResponses();
-    renderAdmin();
-    adminLoginMessage.textContent = `Đã tải ${responses.length} bản ghi từ ${getStoreMode() === "firebase" ? "Firebase" : "localStorage"}.`;
+    allResponses = await listSurveyResponses();
+    applyDateFilter();
+    adminLoginMessage.textContent = `Đã tải ${allResponses.length} bản ghi từ ${getStoreMode() === "firebase" ? "Firebase" : "localStorage"}.`;
   } catch (error) {
     adminLoginMessage.textContent = `Không thể tải dữ liệu: ${error.message}`;
   }
@@ -166,9 +246,10 @@ function getFriendlyAuthError(error) {
 }
 
 function flattenResponses() {
-  return responses.map((response) => {
+  return filteredResponses.map((response) => {
     const row = {
       id: response.id,
+      submittedAt: formatDate(getResponseSubmittedAt(response)),
       createdAt: formatDate(response.createdAt),
       consentGiven: response.consentGiven ? "Có" : "Không",
       anonymous: response.anonymous ? "Có" : "Không",
@@ -200,7 +281,7 @@ function toCsvValue(value) {
 
 function exportCsv() {
   const rows = flattenResponses();
-  const headers = ["id", "createdAt", "consentGiven", "anonymous", "fullName", "phone", ...QUESTIONS.map((question) => question.id)];
+  const headers = ["id", "submittedAt", "createdAt", "consentGiven", "anonymous", "fullName", "phone", ...QUESTIONS.map((question) => question.id)];
   const csv = [
     headers.map(toCsvValue).join(","),
     ...rows.map((row) => headers.map((header) => toCsvValue(row[header])).join(","))
@@ -243,4 +324,18 @@ adminLogin.addEventListener("submit", async (event) => {
 
 refreshDataButton.addEventListener("click", loadResponses);
 exportCsvButton.addEventListener("click", exportCsv);
+
+dateFilterForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  applyDateFilter();
+});
+
+filterStartDateInput.addEventListener("change", applyDateFilter);
+filterEndDateInput.addEventListener("change", applyDateFilter);
+
+clearDateFilterButton.addEventListener("click", () => {
+  filterStartDateInput.value = "";
+  filterEndDateInput.value = "";
+  applyDateFilter();
+});
 })();

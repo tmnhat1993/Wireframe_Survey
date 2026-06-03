@@ -57,6 +57,7 @@ The repository includes `.github/workflows/pages.yml`. In GitHub:
 - If the participant consents, the app stores `fullName` and normalized Vietnamese phone number.
 - If a consenting participant submits with a phone number that already exists, the old response is overwritten by writing to a deterministic phone-hash document ID.
 - If the participant does not consent, the app stores an anonymous survey response and does not store personal information.
+- Each response includes `submittedAt`, the browser-side survey submit timestamp used by Admin date filtering and CSV export.
 - The survey only shows success after the response is saved.
 - After a browser completes the survey, the app stores a local completion marker and blocks retakes on reload.
 - Desktop debug mode can be enabled from the bottom-left checkbox to allow repeated survey testing.
