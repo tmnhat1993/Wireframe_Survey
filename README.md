@@ -52,6 +52,30 @@ The repository includes `.github/workflows/pages.yml`. In GitHub:
 2. Set source to `GitHub Actions`.
 3. Push to `main` to deploy.
 
+## Vercel
+
+This is a static site. Use these settings when importing the repository into Vercel:
+
+- Framework Preset: `Other`
+- Build Command: leave empty
+- Output Directory: leave empty
+- Install Command: leave empty
+- Root Directory: repository root
+
+The repository includes `vercel.json` for static routing, clean URLs, and cache headers.
+
+After Vercel creates the deployment domain, add it in Firebase:
+
+1. Open Firebase Console.
+2. Go to `Authentication > Settings > Authorized domains`.
+3. Add the Vercel domain, for example `your-project.vercel.app`.
+4. If using a custom domain, add that custom domain too.
+
+Useful Vercel URLs:
+
+- Survey: `https://your-project.vercel.app/`
+- Admin: `https://your-project.vercel.app/admin`
+
 ## Data behavior
 
 - If the participant consents, the app stores `fullName` and normalized Vietnamese phone number.
