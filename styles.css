@@ -190,6 +190,136 @@ button {
   height: auto;
 }
 
+#screen-info {
+  position: relative;
+  height: 100vh;
+  min-height: 100vh;
+  padding-bottom: 310px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.info-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.info-logo {
+  display: block;
+  width: 169px;
+  height: auto;
+  margin: 0 auto 40px;
+}
+
+#info-title {
+  margin: 0 0 30px;
+  color: var(--text-highlight);
+  font-size: 30px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.info-form {
+  position: relative;
+  z-index: 1;
+}
+
+.info-form .field,
+.choice-field {
+  gap: 0;
+}
+
+.info-form .field span,
+.choice-field legend {
+  display: block;
+  color: var(--text-on-white);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 56px;
+}
+
+.info-form .field input {
+  height: 56px;
+  min-height: 56px;
+  padding: 0 28px;
+  border: 1px solid var(--text-on-white);
+  border-radius: 28px;
+  background: #ffffff;
+  color: var(--text-on-white);
+  font-size: 15px;
+  text-transform: uppercase;
+}
+
+.choice-field {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.gender-options,
+.age-options {
+  display: grid;
+  gap: 10px;
+}
+
+.gender-options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.age-options {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.gender-options label,
+.age-options button {
+  display: grid;
+  place-items: center;
+  min-height: 56px;
+  padding: 0 14px;
+  border: 1px solid var(--text-on-white);
+  border-radius: 28px;
+  background: #ffffff;
+  color: var(--text-on-white);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.gender-options label {
+  grid-template-columns: 18px auto;
+  gap: 8px;
+  justify-content: center;
+}
+
+.gender-options input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--text-on-white);
+}
+
+.age-options button.is-selected {
+  border-color: var(--text-highlight);
+  background: var(--text-highlight);
+}
+
+.continue-survey-button {
+  width: 220px;
+  margin-top: 12px;
+}
+
+.info-bottom-illustration {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+
 .dummy-logo {
   display: grid;
   place-items: center;
@@ -676,6 +806,10 @@ th {
 }
 
 @media (max-width: 520px) {
+  .age-options {
+    grid-template-columns: 1fr;
+  }
+
   .admin-shell .screen {
     padding: 22px 0 96px;
   }

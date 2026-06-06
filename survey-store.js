@@ -35,26 +35,6 @@ function createId() {
   return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-function getDedupPhone(payload) {
-  return payload.consentGiven && payload.participant?.phone ? payload.participant.phone : "";
-}
-
-function toHex(buffer) {
-  return Array.from(new Uint8Array(buffer))
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
-}
-
-async function createPhoneDocumentId(phone) {
-  if (crypto.subtle) {
-    const bytes = new TextEncoder().encode(phone);
-    const digest = await crypto.subtle.digest("SHA-256", bytes);
-    return `phone_${toHex(digest)}`;
-  }
-
-  return `phone_${phone.replace(/\D/g, "")}`;
-}
-
 async function getFirebaseClient() {
   if (!hasFirebaseConfig()) {
     return null;
@@ -79,7 +59,6 @@ async function getFirebaseClient() {
 
 async function saveSurveyResponse(payload) {
   const firebaseClient = await getFirebaseClient();
-  const dedupPhone = getDedupPhone(payload);
 
   if (firebaseClient) {
     const { db, firestoreModule } = firebaseClient;
@@ -89,45 +68,22 @@ async function saveSurveyResponse(payload) {
       createdAt: firestoreModule.serverTimestamp()
     };
 
-    if (dedupPhone) {
-      const documentId = await createPhoneDocumentId(dedupPhone);
-      const docRef = firestoreModule.doc(responseCollection, documentId);
-
-      await firestoreModule.setDoc(docRef, {
-        ...firebaseRecord,
-        overwrittenAt: firestoreModule.serverTimestamp()
-      });
-
-      return { id: documentId, provider: "firebase", mode: "overwrite" };
-    }
-
     const docRef = await firestoreModule.addDoc(responseCollection, firebaseRecord);
 
     return { id: docRef.id, provider: "firebase", mode: "create" };
   }
 
   const responses = readLocalResponses();
-  const existingIndex = dedupPhone
-    ? responses.findIndex((response) => response.participant?.phone === dedupPhone)
-    : -1;
   const localRecord = {
     ...payload,
-    id: existingIndex >= 0 ? responses[existingIndex].id : createId(),
+    id: createId(),
     createdAt: new Date().toISOString()
   };
 
-  if (existingIndex >= 0) {
-    responses[existingIndex] = {
-      ...localRecord,
-      overwrittenAt: new Date().toISOString()
-    };
-  } else {
-    responses.push(localRecord);
-  }
-
+  responses.push(localRecord);
   writeLocalResponses(responses);
 
-  return { id: localRecord.id, provider: "local", mode: existingIndex >= 0 ? "overwrite" : "create" };
+  return { id: localRecord.id, provider: "local", mode: "create" };
 }
 
 async function listSurveyResponses() {

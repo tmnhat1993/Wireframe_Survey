@@ -51,6 +51,34 @@ function formatDate(value) {
   return date.toLocaleString("vi-VN");
 }
 
+function formatGender(value) {
+  if (value === "male") {
+    return "Nam";
+  }
+
+  if (value === "female") {
+    return "Nữ";
+  }
+
+  return "";
+}
+
+function formatAgeRange(value) {
+  if (value === "18-24") {
+    return "18-24 tuổi";
+  }
+
+  if (value === "24-45") {
+    return "24 - 45 tuổi";
+  }
+
+  if (value === "45+") {
+    return "Trên 45 tuổi";
+  }
+
+  return "";
+}
+
 function getResponseSubmittedAt(response) {
   return response.submittedAt || response.createdAt || "";
 }
@@ -208,7 +236,8 @@ function renderParticipantsTable() {
       <tr>
         <td>${escapeHtml(formatDate(getResponseSubmittedAt(response)))}</td>
         <td>${escapeHtml(participant.fullName || "Ẩn danh")}</td>
-        <td>${escapeHtml(participant.phone || "")}</td>
+        <td>${escapeHtml(formatGender(participant.gender))}</td>
+        <td>${escapeHtml(formatAgeRange(participant.ageRange))}</td>
         <td>${response.consentGiven ? "Có" : "Không"}</td>
         <td>${escapeHtml(answerLabels)}</td>
       </tr>
@@ -218,7 +247,7 @@ function renderParticipantsTable() {
   if (!pageResponses.length) {
     participantsTableBody.innerHTML = `
       <tr>
-        <td colspan="5">Không có dữ liệu trong phạm vi lọc.</td>
+        <td colspan="6">Không có dữ liệu trong phạm vi lọc.</td>
       </tr>
     `;
   }
@@ -273,14 +302,16 @@ function getFriendlyAuthError(error) {
 
 function flattenResponses() {
   return filteredResponses.map((response) => {
+    const participant = response.participant || {};
     const row = {
       id: response.id,
       submittedAt: formatDate(getResponseSubmittedAt(response)),
       createdAt: formatDate(response.createdAt),
       consentGiven: response.consentGiven ? "Có" : "Không",
       anonymous: response.anonymous ? "Có" : "Không",
-      fullName: response.participant?.fullName || "",
-      phone: response.participant?.phone || ""
+      fullName: participant.fullName || "",
+      gender: formatGender(participant.gender),
+      ageRange: formatAgeRange(participant.ageRange)
     };
 
     QUESTIONS.forEach((question) => {
@@ -307,7 +338,7 @@ function toCsvValue(value) {
 
 function exportCsv() {
   const rows = flattenResponses();
-  const headers = ["id", "submittedAt", "createdAt", "consentGiven", "anonymous", "fullName", "phone", ...QUESTIONS.map((question) => question.id)];
+  const headers = ["id", "submittedAt", "createdAt", "consentGiven", "anonymous", "fullName", "gender", "ageRange", ...QUESTIONS.map((question) => question.id)];
   const csv = [
     headers.map(toCsvValue).join(","),
     ...rows.map((row) => headers.map((header) => toCsvValue(row[header])).join(","))

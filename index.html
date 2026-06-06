@@ -26,23 +26,37 @@
       </section>
 
       <section class="screen" id="screen-info" aria-labelledby="info-title">
-        <div class="screen-header">
-          <div class="dummy-logo" aria-label="Logo mẫu"><span>LOGO</span></div>
+        <div class="screen-header info-header">
+          <img class="info-logo" src="./assets/img/main-logo.png" alt="Logo chương trình" />
           <h1 id="info-title">Thông tin khách hàng</h1>
         </div>
 
-        <form class="form-stack" id="participant-form" novalidate>
+        <form class="form-stack info-form" id="participant-form" novalidate>
           <label class="field">
             <span>Họ và tên</span>
             <input id="full-name" name="fullName" type="text" autocomplete="name" placeholder="Nguyễn Văn A" />
             <small class="field-error" id="full-name-error"></small>
           </label>
 
-          <label class="field">
-            <span>Số điện thoại</span>
-            <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="0900 000 000" />
-            <small class="field-error" id="phone-error"></small>
-          </label>
+          <fieldset class="choice-field">
+            <legend>Giới tính</legend>
+            <div class="gender-options">
+              <label><input type="radio" name="gender" value="male" /> Nam</label>
+              <label><input type="radio" name="gender" value="female" /> Nữ</label>
+            </div>
+            <small class="field-error" id="gender-error"></small>
+          </fieldset>
+
+          <fieldset class="choice-field">
+            <legend>Độ tuổi</legend>
+            <input id="age-range" name="ageRange" type="hidden" />
+            <div class="age-options">
+              <button type="button" data-age-range="18-24">18-24 tuổi</button>
+              <button type="button" data-age-range="24-45">24 - 45 tuổi</button>
+              <button type="button" data-age-range="45+">Trên 45 tuổi</button>
+            </div>
+            <small class="field-error" id="age-range-error"></small>
+          </fieldset>
 
           <label class="checkbox-row">
             <input id="consent" name="consent" type="checkbox" />
@@ -51,8 +65,12 @@
 
           <p class="helper-text">Nếu không đồng ý chia sẻ thông tin, bạn vẫn có thể làm khảo sát và kết quả sẽ được lưu dưới dạng ẩn danh.</p>
 
-          <button class="primary-button" type="submit">Tiếp tục khảo sát</button>
+          <button class="image-button continue-survey-button" type="submit">
+            <img src="./assets/img/continue-survey.png" alt="Tiếp tục khảo sát" />
+          </button>
         </form>
+
+        <img class="info-bottom-illustration" src="./assets/img/starter-illustration.png" alt="" />
       </section>
 
       <section class="screen" id="screen-quiz" aria-labelledby="quiz-title">
@@ -99,7 +117,7 @@
       <h2 id="policy-title">Quy định chia sẻ thông tin</h2>
       <div class="policy-copy">
         <p>Thông tin cá nhân được thu thập nhằm xác nhận người tham gia, tổng hợp kết quả khảo sát, liên hệ khi cần thiết về chương trình và chăm sóc khách hàng theo phạm vi bạn đã đồng ý.</p>
-        <p>Thông tin có thể bao gồm họ tên, số điện thoại, thời điểm tham gia và câu trả lời khảo sát. Nếu bạn không đồng ý chia sẻ thông tin, hệ thống chỉ lưu kết quả khảo sát dưới dạng ẩn danh.</p>
+        <p>Thông tin có thể bao gồm họ tên, giới tính, độ tuổi, thời điểm tham gia và câu trả lời khảo sát. Nếu bạn không đồng ý chia sẻ thông tin, hệ thống chỉ lưu kết quả khảo sát dưới dạng ẩn danh.</p>
         <p>Dữ liệu được bảo mật, chỉ nhân sự hoặc đơn vị xử lý dữ liệu được ủy quyền mới được tiếp cận cho mục đích vận hành chương trình. Chúng tôi không bán hoặc chia sẻ thông tin cho bên thứ ba nếu không có sự đồng ý của bạn hoặc yêu cầu hợp pháp của cơ quan có thẩm quyền.</p>
         <p>Bạn có quyền yêu cầu kiểm tra, cập nhật, rút lại đồng ý hoặc xóa thông tin cá nhân theo quy định pháp luật Việt Nam về bảo vệ dữ liệu cá nhân.</p>
       </div>

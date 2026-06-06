@@ -78,8 +78,7 @@ Useful Vercel URLs:
 
 ## Data behavior
 
-- If the participant consents, the app stores `fullName` and normalized Vietnamese phone number.
-- If a consenting participant submits with a phone number that already exists, the old response is overwritten by writing to a deterministic phone-hash document ID.
+- If the participant consents, the app stores `fullName`, `gender`, and `ageRange`.
 - If the participant does not consent, the app stores an anonymous survey response and does not store personal information.
 - Each response includes `submittedAt`, the browser-side survey submit timestamp used by Admin date filtering and CSV export.
 - The survey only shows success after the response is saved.

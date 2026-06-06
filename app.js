@@ -6,10 +6,12 @@ const screens = document.querySelectorAll(".screen");
 const startSurveyButton = document.querySelector("#start-survey");
 const participantForm = document.querySelector("#participant-form");
 const fullNameInput = document.querySelector("#full-name");
-const phoneInput = document.querySelector("#phone");
+const ageRangeInput = document.querySelector("#age-range");
 const consentInput = document.querySelector("#consent");
 const fullNameError = document.querySelector("#full-name-error");
-const phoneError = document.querySelector("#phone-error");
+const genderError = document.querySelector("#gender-error");
+const ageRangeError = document.querySelector("#age-range-error");
+const ageRangeButtons = document.querySelectorAll("[data-age-range]");
 const policyDialog = document.querySelector("#policy-dialog");
 const openPolicyButton = document.querySelector("#open-policy");
 const closePolicyButton = document.querySelector("#close-policy");
@@ -35,7 +37,8 @@ let isSubmitting = false;
 const surveyState = {
   participant: {
     fullName: "",
-    phone: "",
+    gender: "",
+    ageRange: "",
     consentGiven: false
   },
   answers: {}
@@ -100,48 +103,26 @@ function validateFullName(value) {
   return { valid: true, value: normalizedName };
 }
 
-function normalizeVietnamPhone(value) {
-  const compactPhone = value.replace(/[\s.-]/g, "");
-
-  if (!compactPhone) {
-    return { valid: true, value: "" };
-  }
-
-  if (/^0\d{9}$/.test(compactPhone)) {
-    return { valid: true, value: compactPhone };
-  }
-
-  if (/^\+84\d{9}$/.test(compactPhone)) {
-    return { valid: true, value: `0${compactPhone.slice(3)}` };
-  }
-
-  if (/^84\d{9}$/.test(compactPhone)) {
-    return { valid: true, value: `0${compactPhone.slice(2)}` };
-  }
-
-  return { valid: false, message: "Số điện thoại Việt Nam không hợp lệ." };
-}
-
 function validateParticipant() {
   const nameResult = validateFullName(fullNameInput.value);
-  const phoneResult = normalizeVietnamPhone(phoneInput.value);
+  const selectedGender = document.querySelector("input[name='gender']:checked");
+  const gender = selectedGender?.value || "";
+  const ageRange = ageRangeInput.value;
 
   fullNameError.textContent = nameResult.valid ? "" : nameResult.message;
-  phoneError.textContent = phoneResult.valid ? "" : phoneResult.message;
+  genderError.textContent = gender ? "" : "Vui lòng chọn giới tính.";
+  ageRangeError.textContent = ageRange ? "" : "Vui lòng chọn độ tuổi.";
 
-  if (!nameResult.valid || !phoneResult.valid) {
+  if (!nameResult.valid || !gender || !ageRange) {
     return false;
   }
 
   surveyState.participant = {
     fullName: nameResult.value,
-    phone: phoneResult.value,
+    gender,
+    ageRange,
     consentGiven: consentInput.checked
   };
-
-  if (phoneResult.value) {
-    phoneInput.value = phoneResult.value;
-  }
 
   return true;
 }
@@ -208,13 +189,13 @@ function validateAllAnswers() {
 }
 
 function buildPayload() {
-  const { fullName, phone, consentGiven } = surveyState.participant;
+  const { fullName, gender, ageRange, consentGiven } = surveyState.participant;
 
   return {
     submittedAt: new Date().toISOString(),
     consentGiven,
     anonymous: !consentGiven,
-    participant: consentGiven ? { fullName, phone } : null,
+    participant: consentGiven ? { fullName, gender, ageRange } : null,
     answers: { ...surveyState.answers },
     metadata: {
       source: "web",
@@ -226,14 +207,14 @@ function buildPayload() {
 }
 
 function markSurveyCompleted(result) {
-  const { fullName, phone, consentGiven } = surveyState.participant;
+  const { fullName, gender, ageRange, consentGiven } = surveyState.participant;
   const completedRecord = {
     completedAt: new Date().toISOString(),
     responseId: result.id,
     provider: result.provider,
     consentGiven,
     anonymous: !consentGiven,
-    participant: consentGiven ? { fullName, phone } : null
+    participant: consentGiven ? { fullName, gender, ageRange } : null
   };
 
   localStorage.setItem(COMPLETION_STORAGE_KEY, JSON.stringify(completedRecord));
@@ -279,13 +260,16 @@ async function submitSurvey() {
 
 function resetSurvey() {
   participantForm.reset();
-  surveyState.participant = { fullName: "", phone: "", consentGiven: false };
+  ageRangeInput.value = "";
+  ageRangeButtons.forEach((button) => button.classList.remove("is-selected"));
+  surveyState.participant = { fullName: "", gender: "", ageRange: "", consentGiven: false };
   surveyState.answers = {};
   document.querySelectorAll(".question-card input").forEach((input) => {
     input.checked = false;
   });
   fullNameError.textContent = "";
-  phoneError.textContent = "";
+  genderError.textContent = "";
+  ageRangeError.textContent = "";
   questionError.textContent = "";
   showQuestion(0);
   showRoute("intro");
@@ -298,6 +282,14 @@ enforceCompletionGate();
 
 startSurveyButton.addEventListener("click", () => {
   showRoute("info");
+});
+
+ageRangeButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    ageRangeInput.value = button.dataset.ageRange;
+    ageRangeButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
+    ageRangeError.textContent = "";
+  });
 });
 
 participantForm.addEventListener("submit", (event) => {
