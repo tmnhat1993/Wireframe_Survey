@@ -3,6 +3,7 @@ const { QUESTIONS, SURVEY_VERSION } = window.SurveyQuestions;
 const { getStoreMode, saveSurveyResponse } = window.SurveyStore;
 
 const screens = document.querySelectorAll(".screen");
+const startSurveyButton = document.querySelector("#start-survey");
 const participantForm = document.querySelector("#participant-form");
 const fullNameInput = document.querySelector("#full-name");
 const phoneInput = document.querySelector("#phone");
@@ -287,13 +288,17 @@ function resetSurvey() {
   phoneError.textContent = "";
   questionError.textContent = "";
   showQuestion(0);
-  showRoute("info");
+  showRoute("intro");
 }
 
 renderQuestions();
 showQuestion(0);
 syncDebugMode();
 enforceCompletionGate();
+
+startSurveyButton.addEventListener("click", () => {
+  showRoute("info");
+});
 
 participantForm.addEventListener("submit", (event) => {
   event.preventDefault();
