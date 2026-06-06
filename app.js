@@ -152,7 +152,7 @@ function renderQuestions() {
         (option) => `
           <label>
             <input type="radio" name="${question.id}" value="${option.id}" />
-            <span>${option.label}</span>
+            <span class="answer-copy">${option.label}</span>
           </label>
         `
       )
@@ -187,6 +187,7 @@ function showQuestion(index) {
     card.classList.toggle("is-active", cardIndex === activeQuestionIndex);
   });
 
+  questionError.hidden = true;
   questionError.textContent = "";
   questionCounter.textContent = `Câu ${activeQuestionIndex + 1}/${QUESTIONS.length}`;
   previousQuestionButton.querySelector("img").alt = activeQuestionIndex === 0 ? "Quay lại" : "Câu trước";
@@ -272,11 +273,13 @@ async function submitSurvey() {
   }
 
   if (!persistCurrentAnswer()) {
+    questionError.hidden = false;
     questionError.textContent = "Vui lòng chọn một câu trả lời trước khi gửi khảo sát.";
     return;
   }
 
   if (!validateAllAnswers()) {
+    questionError.hidden = false;
     questionError.textContent = "Vui lòng trả lời đầy đủ tất cả câu hỏi.";
     return;
   }
@@ -319,6 +322,7 @@ function resetSurvey() {
   fullNameError.textContent = "";
   genderError.textContent = "";
   ageRangeError.textContent = "";
+  questionError.hidden = true;
   questionError.textContent = "";
   showQuestion(0);
   showRoute("intro");
@@ -365,6 +369,7 @@ questionList.addEventListener("change", (event) => {
     }
 
     persistCurrentAnswer();
+    questionError.hidden = true;
     questionError.textContent = "";
   }
 });
@@ -384,6 +389,7 @@ questionList.addEventListener("input", (event) => {
 
   if (questionId === getActiveQuestion().id) {
     persistCurrentAnswer();
+    questionError.hidden = true;
     questionError.textContent = "";
   }
 });
@@ -412,6 +418,7 @@ previousQuestionButton.addEventListener("click", () => {
 
 nextQuestionButton.addEventListener("click", () => {
   if (!persistCurrentAnswer()) {
+    questionError.hidden = false;
     questionError.textContent = "Vui lòng chọn một câu trả lời trước khi tiếp tục.";
     return;
   }
