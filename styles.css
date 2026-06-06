@@ -1639,7 +1639,8 @@ th {
   }
 
   .thanks-panel {
-    padding: 170px 0 0;
+    min-height: auto;
+    padding: 170px 0;
   }
 
   .question-card h2 {
