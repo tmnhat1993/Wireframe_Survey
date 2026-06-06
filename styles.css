@@ -157,6 +157,8 @@ button {
 
 .screen {
   display: none;
+  min-height: 100dvh;
+  max-height: 225vw;
   padding: 0 13px;
 }
 
@@ -218,8 +220,8 @@ button {
 
 #screen-info {
   position: relative;
-  height: 100vh;
-  min-height: 100vh;
+  min-height: 100dvh;
+  max-height: 225vw;
   padding-bottom: 0;
   overflow-x: hidden;
   overflow-y: auto;
@@ -563,8 +565,8 @@ h2 {
 
 #screen-quiz {
   position: relative;
-  height: 100vh;
-  min-height: 100vh;
+  min-height: 100dvh;
+  max-height: 225vw;
   padding-bottom: 0;
   overflow: hidden;
 }
@@ -656,7 +658,7 @@ h2 {
 }
 
 .question-card h2 {
-  margin: 0 0 15px;
+  margin: 0 0 5px;
   color: #000000;
   font-size: 16px;
   font-weight: 500;
@@ -765,7 +767,7 @@ h2 {
   position: relative;
   bottom: auto;
   z-index: 2;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 5px;
   margin: 0;
   padding: 0;
@@ -788,11 +790,11 @@ h2 {
 
 .quiz-bottom-bg {
   position: absolute;
-  right: -15px;
+  right: 0;
   bottom: 0;
-  left: -15px;
+  left: 0;
   display: block;
-  width: calc(100% + 30px);
+  width: 100%;
   height: auto;
 }
 
@@ -832,11 +834,11 @@ h2 {
 #screen-submit,
 #screen-thanks {
   position: relative;
+  min-height: 100dvh;
+  max-height: 225vw;
 }
 
 #screen-thanks {
-  min-height: 100vh;
-  min-height: 100dvh;
   overflow: hidden;
 }
 
@@ -1202,7 +1204,8 @@ th {
   z-index: 1;
 }
 
-.anonymous-continue-button {
+.anonymous-continue-button,
+.image-button.anonymous-continue-button {
   position: relative;
   z-index: 2;
   width: 100%;
@@ -1357,16 +1360,16 @@ th {
 
 .admin-screen {
   position: relative;
-  min-height: 100vh;
   min-height: 100dvh;
+  max-height: 225vw;
   padding: 0;
   overflow-x: hidden;
 }
 
 .admin-login-screen {
   position: relative;
-  min-height: 100vh;
   min-height: 100dvh;
+  max-height: 225vw;
 }
 
 .admin-login-panel {
@@ -1490,16 +1493,10 @@ th {
   }
 
   .intro-logo {
-    margin: 0 auto 60px;
+    margin: 90px auto 60px;
   }
 
   .image-button {
-    width: 200px;
-  }
-
-  .continue-survey-button,
-  .thanks-redo-button,
-  .admin-login-button {
     width: 100%;
   }
 
@@ -1559,7 +1556,33 @@ th {
   }
 
   .quiz-header {
-    padding-top: 150px;
+    padding-top: 120px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-logo,
+  .submit-logo,
+  .info-logo {
+    top: 30px;
+    width: 139px;
+  }
+
+  .question-card h2 {
+    padding-top: 0;
+  }
+
+  .question-card input[type="radio"] {
+    width: 22px;
+    height: 22px;
+  }
+
+  .question-card input[type="radio"]:checked::after {
+    top: 6px;
+    left: 5px;
+    width: 10px;
+    height: 5px;
+    border-bottom: 2px solid #ffffff;
+    border-left: 2px solid #ffffff;
   }
 
   .quiz-bottom-illustration[data-question="1"] {
