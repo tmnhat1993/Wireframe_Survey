@@ -38,14 +38,14 @@
             <small class="field-error" id="full-name-error"></small>
           </label>
 
-          <fieldset class="choice-field gender-field">
-            <legend>Giới tính</legend>
+          <div class="choice-field gender-field" role="radiogroup" aria-labelledby="gender-label">
+            <span class="choice-label" id="gender-label">Giới tính</span>
             <div class="gender-options">
               <label><input type="radio" name="gender" value="male" /> Nam</label>
               <label><input type="radio" name="gender" value="female" /> Nữ</label>
             </div>
             <small class="field-error" id="gender-error"></small>
-          </fieldset>
+          </div>
 
           <fieldset class="choice-field">
             <legend>Độ tuổi</legend>
