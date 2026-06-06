@@ -203,6 +203,10 @@ button {
   transform: scale(1);
 }
 
+#start-survey {
+  width: 220px;
+}
+
 .image-button img {
   display: block;
   width: 100%;
@@ -855,6 +859,7 @@ h2 {
 .submit-loading-img {
   display: block;
   width: 276px;
+  max-width: 80%;
   height: auto;
   margin: 0 auto 20px;
 }
@@ -1166,6 +1171,7 @@ th {
 
 #policy-dialog .policy-copy {
   max-height: 50vh;
+  margin-bottom: 12px;
   overflow-y: auto;
 }
 
@@ -1500,6 +1506,10 @@ th {
     width: 100%;
   }
 
+  #start-survey {
+    width: 200px;
+  }
+
   #info-title {
     margin: 0 0 24px;
   }
@@ -1621,6 +1631,36 @@ th {
   .answer-copy,
   .submit-status {
     font-size: 15px;
+  }
+}
+
+@media (max-width: 389px) {
+  #info-title,
+  #quiz-title,
+  #submit-title,
+  #thanks-title,
+  #admin-title,
+  .admin-dashboard-title,
+  #policy-dialog #policy-title,
+  #anonymous-dialog #anonymous-title,
+  #delete-data-dialog #delete-data-title {
+    font-size: 24px;
+  }
+
+  h2,
+  .question-card h2,
+  .question-card label,
+  .answer-copy,
+  .submit-status,
+  #policy-dialog .policy-copy,
+  #policy-dialog .policy-copy p,
+  #anonymous-dialog .anonymous-copy,
+  #anonymous-dialog .anonymous-copy p {
+    font-size: 14px;
+  }
+
+  #start-survey {
+    width: 180px;
   }
 }
 
