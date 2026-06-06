@@ -493,14 +493,15 @@ h2 {
 
 .checkbox-row input:checked::after {
   position: absolute;
-  top: 3px;
-  left: 4px;
-  width: 14px;
-  height: 8px;
+  top: 45%;
+  left: 50%;
+  width: 13px;
+  height: 7px;
   border-bottom: 4px solid #ffffff;
   border-left: 4px solid #ffffff;
   content: "";
-  transform: rotate(-45deg);
+  transform: translate(-50%, -50%) rotate(-45deg);
+  transform-origin: center;
 }
 
 .question-card input {
