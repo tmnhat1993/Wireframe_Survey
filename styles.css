@@ -559,7 +559,7 @@ h2 {
 
 .quiz-header {
   padding-top: 100px;
-  margin-bottom: 34px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
@@ -567,7 +567,7 @@ h2 {
 .submit-logo,
 .info-logo {
   position: absolute;
-  top: 60px;
+  top: 30px;
   left: 50%;
   z-index: 2;
   display: block;
@@ -1611,11 +1611,11 @@ th {
 
   .quiz-header {
     padding-top: 120px;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
   }
 
   #screen-quiz {
-    min-height: 200vw;
+    min-height: 184vw;
     max-height: 100vh;
   }
 
@@ -1624,6 +1624,24 @@ th {
   .info-logo {
     top: 30px;
     width: 139px;
+  }
+
+  .quiz-question-frame {
+    margin-top: 65px;
+  }
+
+  .question-label-holder {
+    top: -81px;
+    left: 32px;
+    width: 180px;
+  }
+
+  .quiz-actions {
+    gap: 12px;
+  }
+
+  .thanks-panel {
+    padding: 170px 0 0;
   }
 
   .question-card h2 {
@@ -1645,8 +1663,8 @@ th {
   }
 
   .question-card {
-    margin-bottom: 20px;
-    padding: 20px 24px 20px;
+    margin-bottom: 10px;
+    padding: 12px 24px 12px;
   }
 
   .question-card label {
