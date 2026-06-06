@@ -16,6 +16,11 @@
   box-sizing: border-box;
 }
 
+html {
+  min-height: 100%;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+}
+
 [hidden] {
   display: none !important;
 }
@@ -26,6 +31,7 @@ body {
   background: linear-gradient(180deg, var(--app-bg-start) 0%, var(--app-bg-end) 100%);
   background-attachment: fixed;
   color: var(--text-main);
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
 }
 
 button,
@@ -53,6 +59,7 @@ button {
   position: relative;
   width: min(100%, 480px);
   min-height: 100vh;
+  min-height: 100dvh;
   margin: 0 auto;
   padding: 0 15px;
   background: transparent;
