@@ -193,8 +193,13 @@ function showQuestion(index) {
   previousQuestionButton.querySelector("img").alt = activeQuestionIndex === 0 ? "Quay lại" : "Câu trước";
   nextQuestionButton.querySelector("img").alt = activeQuestionIndex === QUESTIONS.length - 1 ? "Gửi khảo sát" : "Tiếp theo";
 
-  const illustrationIndex = Math.min(activeQuestionIndex + 1, 5);
-  quizBottomIllustration.src = `./assets/img/question-${illustrationIndex}-bottom-img.png`;
+  const illustrationIndex = activeQuestionIndex + 1;
+
+  quizBottomIllustration.hidden = illustrationIndex === 6;
+  if (illustrationIndex < 6) {
+    quizBottomIllustration.src = `./assets/img/question-${illustrationIndex}-bottom-img.png`;
+    quizBottomIllustration.dataset.question = String(illustrationIndex);
+  }
 }
 
 function getActiveQuestion() {
