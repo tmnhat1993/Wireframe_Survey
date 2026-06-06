@@ -5,34 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Survey Admin</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="./styles.css?v=20260606-07" />
+    <link rel="stylesheet" href="./styles.css?v=20260606-27" />
   </head>
   <body>
     <main class="app-shell admin-shell">
       <a class="admin-link" href="./index.html">Survey</a>
 
-      <section class="screen is-active" aria-labelledby="admin-title">
-        <div class="screen-header">
-          <p class="eyebrow">Khu vực quản trị</p>
-          <h1 id="admin-title">Admin Survey</h1>
+      <section class="screen admin-screen is-active" aria-labelledby="admin-title">
+        <div class="admin-login-screen" id="admin-login-screen">
+          <img class="submit-logo" src="./assets/img/main-logo.png" alt="Logo chương trình" />
+
+          <div class="admin-login-panel">
+            <p class="admin-eyebrow">Khu vực quản trị</p>
+            <h1 id="admin-title">Admin Survey</h1>
+
+            <form class="form-stack admin-login-form" id="admin-login" novalidate>
+              <label class="field">
+                <span>Admin ID</span>
+                <input id="admin-id" type="text" autocomplete="username" placeholder="admin" />
+              </label>
+
+              <label class="field">
+                <span>Mật khẩu</span>
+                <input id="admin-password" type="password" autocomplete="current-password" placeholder="••••••••" />
+              </label>
+
+              <p class="helper-text" id="admin-login-message"></p>
+              <button class="image-button admin-login-button" type="submit">
+                <img src="./assets/img/login-btn.png" alt="Đăng nhập" />
+              </button>
+            </form>
+          </div>
+
+          <img class="info-bottom-illustration" src="./assets/img/starter-illustration.png" alt="" />
         </div>
 
-        <form class="form-stack admin-login" id="admin-login" novalidate>
-          <label class="field">
-            <span>Admin ID</span>
-            <input id="admin-id" type="text" autocomplete="username" placeholder="admin" />
-          </label>
-
-          <label class="field">
-            <span>Mật khẩu</span>
-            <input id="admin-password" type="password" autocomplete="current-password" placeholder="••••••••" />
-          </label>
-
-          <p class="helper-text" id="admin-login-message"></p>
-          <button class="primary-button" type="submit">Đăng nhập</button>
-        </form>
-
         <div class="admin-content" id="admin-content" hidden>
+          <img class="submit-logo" src="./assets/img/main-logo.png" alt="Logo chương trình" />
+
+          <div class="admin-dashboard-panel">
+            <p class="admin-eyebrow">Khu vực quản trị</p>
+            <h1 class="admin-dashboard-title">Admin Survey</h1>
+
           <div class="metric-grid">
             <article>
               <span>Tổng lượt tham gia</span>
@@ -51,6 +65,7 @@
           <div class="export-actions">
             <button class="secondary-button" type="button" id="refresh-data">Tải lại</button>
             <button class="primary-button" type="button" id="export-csv">Export CSV</button>
+            <button class="danger-button" type="button" id="delete-all-data">Xóa tất cả dữ liệu</button>
           </div>
 
           <form class="filter-panel" id="date-filter-form">
@@ -82,8 +97,7 @@
                   <tr>
                     <th>Thời gian submit</th>
                     <th>Họ tên</th>
-                    <th>Giới tính</th>
-                    <th>Độ tuổi</th>
+                    <th>Giới tính / Tuổi</th>
                     <th>Chia sẻ</th>
                     <th>Trả lời</th>
                   </tr>
@@ -97,13 +111,25 @@
               <button class="secondary-button" type="button" id="participants-next-page">Trang sau</button>
             </div>
           </section>
+          </div>
         </div>
       </section>
     </main>
 
+    <dialog class="policy-dialog" id="delete-data-dialog" aria-labelledby="delete-data-title">
+      <h2 id="delete-data-title">Xác nhận xóa dữ liệu</h2>
+      <div class="anonymous-copy">
+        <p>Bạn có chắc muốn xóa toàn bộ dữ liệu khảo sát? Hành động này không thể hoàn tác.</p>
+      </div>
+      <div class="admin-dialog-actions">
+        <button class="secondary-button" type="button" id="cancel-delete-data">Hủy</button>
+        <button class="danger-button" type="button" id="confirm-delete-data">Xóa tất cả</button>
+      </div>
+    </dialog>
+
     <script src="./firebase-config.js?v=20260606-07"></script>
     <script src="./questions.js?v=20260606-07"></script>
-    <script src="./survey-store.js?v=20260606-07"></script>
-    <script src="./admin.js?v=20260606-07"></script>
+    <script src="./survey-store.js?v=20260606-03"></script>
+    <script src="./admin.js?v=20260606-03"></script>
   </body>
 </html>

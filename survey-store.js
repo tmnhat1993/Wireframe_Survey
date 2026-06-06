@@ -113,12 +113,71 @@ async function signInAdmin(adminId, password) {
   const firebaseClient = await getFirebaseClient();
 
   if (!firebaseClient) {
-    return null;
+    throw new Error("Firebase chưa được cấu hình.");
   }
 
   const email = adminId.includes("@") ? adminId : `${adminId}@admin.local`;
   await firebaseClient.authModule.signInWithEmailAndPassword(firebaseClient.auth, email, password);
   return firebaseClient.auth.currentUser;
+}
+
+async function waitForAuthReady() {
+  const firebaseClient = await getFirebaseClient();
+
+  if (!firebaseClient) {
+    return null;
+  }
+
+  if (firebaseClient.auth.currentUser) {
+    return firebaseClient.auth.currentUser;
+  }
+
+  return new Promise((resolve) => {
+    const unsubscribe = firebaseClient.authModule.onAuthStateChanged(firebaseClient.auth, (user) => {
+      unsubscribe();
+      resolve(user);
+    });
+  });
+}
+
+async function getCurrentAdminUser() {
+  return waitForAuthReady();
+}
+
+async function signOutAdmin() {
+  const firebaseClient = await getFirebaseClient();
+
+  if (!firebaseClient) {
+    return;
+  }
+
+  await firebaseClient.authModule.signOut(firebaseClient.auth);
+}
+
+async function deleteAllSurveyResponses() {
+  const firebaseClient = await getFirebaseClient();
+
+  if (firebaseClient) {
+    const { db, firestoreModule } = firebaseClient;
+    const snapshot = await firestoreModule.getDocs(firestoreModule.collection(db, "surveyResponses"));
+    const docs = snapshot.docs;
+
+    for (let index = 0; index < docs.length; index += 500) {
+      const batch = firestoreModule.writeBatch(db);
+      docs.slice(index, index + 500).forEach((docSnapshot) => {
+        batch.delete(docSnapshot.ref);
+      });
+      await batch.commit();
+    }
+
+    return { provider: "firebase", count: docs.length };
+  }
+
+  const responses = readLocalResponses();
+  const count = responses.length;
+  writeLocalResponses([]);
+
+  return { provider: "local", count };
 }
 
 function getStoreMode() {
@@ -129,6 +188,9 @@ window.SurveyStore = {
   getStoreMode,
   listSurveyResponses,
   saveSurveyResponse,
-  signInAdmin
+  signInAdmin,
+  signOutAdmin,
+  getCurrentAdminUser,
+  deleteAllSurveyResponses
 };
 })();

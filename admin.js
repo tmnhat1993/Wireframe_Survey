@@ -1,8 +1,11 @@
 (function () {
 const { QUESTIONS, getOptionLabel, getQuestionText } = window.SurveyQuestions;
-const { getStoreMode, listSurveyResponses, signInAdmin } = window.SurveyStore;
-const ADMIN_FALLBACK = window.SURVEY_ADMIN_FALLBACK;
+const { getStoreMode, listSurveyResponses, signInAdmin, signOutAdmin, getCurrentAdminUser, deleteAllSurveyResponses } = window.SurveyStore;
 
+const ADMIN_SESSION_KEY = "survey-admin-session-expires-at";
+const ADMIN_SESSION_DURATION_MS = 24 * 60 * 60 * 1000;
+
+const adminLoginScreen = document.querySelector("#admin-login-screen");
 const adminLogin = document.querySelector("#admin-login");
 const adminIdInput = document.querySelector("#admin-id");
 const adminPasswordInput = document.querySelector("#admin-password");
@@ -15,6 +18,10 @@ const answerCharts = document.querySelector("#answer-charts");
 const participantsTableBody = document.querySelector("#participants-table-body");
 const refreshDataButton = document.querySelector("#refresh-data");
 const exportCsvButton = document.querySelector("#export-csv");
+const deleteAllDataButton = document.querySelector("#delete-all-data");
+const deleteDataDialog = document.querySelector("#delete-data-dialog");
+const cancelDeleteDataButton = document.querySelector("#cancel-delete-data");
+const confirmDeleteDataButton = document.querySelector("#confirm-delete-data");
 const dateFilterForm = document.querySelector("#date-filter-form");
 const filterStartDateInput = document.querySelector("#filter-start-date");
 const filterEndDateInput = document.querySelector("#filter-end-date");
@@ -28,6 +35,80 @@ let allResponses = [];
 let filteredResponses = [];
 let currentParticipantsPage = 1;
 const PARTICIPANTS_PAGE_SIZE = 10;
+
+function saveAdminSession() {
+  localStorage.setItem(ADMIN_SESSION_KEY, String(Date.now() + ADMIN_SESSION_DURATION_MS));
+}
+
+function isAdminSessionValid() {
+  const expiresAt = Number(localStorage.getItem(ADMIN_SESSION_KEY) || "0");
+  return Date.now() < expiresAt;
+}
+
+function clearAdminSession() {
+  localStorage.removeItem(ADMIN_SESSION_KEY);
+}
+
+function showAdminDashboard() {
+  adminLoginScreen.hidden = true;
+  adminContent.hidden = false;
+}
+
+function showAdminLogin(message = "") {
+  adminLoginScreen.hidden = false;
+  adminContent.hidden = true;
+  adminLoginMessage.textContent = message;
+}
+
+async function requireFirebaseAdmin() {
+  if (getStoreMode() !== "firebase") {
+    throw new Error("Admin chỉ hỗ trợ đăng nhập Firebase.");
+  }
+
+  const user = await getCurrentAdminUser();
+
+  if (!user || !isAdminSessionValid()) {
+    if (user) {
+      await signOutAdmin();
+    }
+    clearAdminSession();
+    throw new Error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+  }
+
+  return user;
+}
+
+async function restoreAdminSession() {
+  if (getStoreMode() !== "firebase") {
+    showAdminLogin("Admin chỉ hỗ trợ đăng nhập Firebase.");
+    return;
+  }
+
+  const user = await getCurrentAdminUser();
+
+  if (!user) {
+    clearAdminSession();
+    return;
+  }
+
+  if (!isAdminSessionValid()) {
+    await signOutAdmin();
+    clearAdminSession();
+    showAdminLogin("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+    return;
+  }
+
+  showAdminDashboard();
+  await loadResponses();
+}
+
+function closeDialogOnBackdropClick(dialog) {
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) {
+      dialog.close();
+    }
+  });
+}
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -77,6 +158,51 @@ function formatAgeRange(value) {
   }
 
   return "";
+}
+
+function isAnonymousResponse(response) {
+  return Boolean(response.anonymous || !response.consentGiven);
+}
+
+function formatParticipantProfile(response) {
+  if (isAnonymousResponse(response)) {
+    return "-";
+  }
+
+  const participant = response.participant || {};
+  const gender = formatGender(participant.gender);
+  const ageRange = formatAgeRange(participant.ageRange);
+  const parts = [gender, ageRange].filter(Boolean);
+
+  return parts.length ? parts.join(" · ") : "-";
+}
+
+function getOptionDisplayLabel(option) {
+  if (option.id === "other") {
+    return "Khác";
+  }
+
+  return option.id;
+}
+
+function formatAnswerShort(answer) {
+  if (!answer) {
+    return "-";
+  }
+
+  if (typeof answer === "object" && answer?.type === "other") {
+    return "Khác";
+  }
+
+  return String(answer);
+}
+
+function formatAnswerExport(questionId, answer) {
+  if (!answer) {
+    return "";
+  }
+
+  return getOptionLabel(questionId, answer);
 }
 
 function getResponseSubmittedAt(response) {
@@ -201,7 +327,7 @@ function renderAnswerCharts() {
       return `
           <div class="chart-row">
             <div class="chart-row-label">
-              <span>${escapeHtml(option.label)}</span>
+              <span>${escapeHtml(getOptionDisplayLabel(option))}</span>
               <strong>${count} (${percent}%)</strong>
             </div>
             <div class="chart-track" aria-hidden="true">
@@ -234,16 +360,15 @@ function renderParticipantsTable() {
   participantsTableBody.innerHTML = pageResponses.map((response) => {
     const participant = response.participant || {};
     const answerLabels = QUESTIONS.map((question) => {
-      const optionId = response.answers?.[question.id];
-      return `${question.id}: ${optionId ? getOptionLabel(question.id, optionId) : "-"}`;
+      const answer = response.answers?.[question.id];
+      return `${question.id}: ${formatAnswerShort(answer)}`;
     }).join("; ");
 
     return `
       <tr>
         <td>${escapeHtml(formatDate(getResponseSubmittedAt(response)))}</td>
         <td>${escapeHtml(participant.fullName || "Ẩn danh")}</td>
-        <td>${escapeHtml(formatGender(participant.gender))}</td>
-        <td>${escapeHtml(formatAgeRange(participant.ageRange))}</td>
+        <td>${escapeHtml(formatParticipantProfile(response))}</td>
         <td>${response.consentGiven ? "Có" : "Không"}</td>
         <td>${escapeHtml(answerLabels)}</td>
       </tr>
@@ -253,7 +378,7 @@ function renderParticipantsTable() {
   if (!pageResponses.length) {
     participantsTableBody.innerHTML = `
       <tr>
-        <td colspan="6">Không có dữ liệu trong phạm vi lọc.</td>
+        <td colspan="5">Không có dữ liệu trong phạm vi lọc.</td>
       </tr>
     `;
   }
@@ -273,19 +398,13 @@ function renderAdmin() {
 }
 
 async function loadResponses() {
-  adminLoginMessage.textContent = "Đang tải dữ liệu...";
-
   try {
+    await requireFirebaseAdmin();
     allResponses = await listSurveyResponses();
     applyDateFilter();
-    adminLoginMessage.textContent = `Đã tải ${allResponses.length} bản ghi từ ${getStoreMode() === "firebase" ? "Firebase" : "localStorage"}.`;
   } catch (error) {
-    adminLoginMessage.textContent = `Không thể tải dữ liệu: ${error.message}`;
+    showAdminLogin(error.message);
   }
-}
-
-function canUseFallbackLogin(adminId, password) {
-  return getStoreMode() === "local" && adminId === ADMIN_FALLBACK.id && password === ADMIN_FALLBACK.password;
 }
 
 function getFriendlyAuthError(error) {
@@ -309,19 +428,20 @@ function getFriendlyAuthError(error) {
 function flattenResponses() {
   return filteredResponses.map((response) => {
     const participant = response.participant || {};
+    const anonymous = isAnonymousResponse(response);
     const row = {
       id: response.id,
       submittedAt: formatDate(getResponseSubmittedAt(response)),
       createdAt: formatDate(response.createdAt),
       consentGiven: response.consentGiven ? "Có" : "Không",
-      anonymous: response.anonymous ? "Có" : "Không",
-      fullName: participant.fullName || "",
-      gender: formatGender(participant.gender),
-      ageRange: formatAgeRange(participant.ageRange)
+      anonymous: anonymous ? "Có" : "Không",
+      fullName: anonymous ? "" : participant.fullName || "",
+      gender: anonymous ? "" : formatGender(participant.gender),
+      ageRange: anonymous ? "" : formatAgeRange(participant.ageRange)
     };
 
     QUESTIONS.forEach((question) => {
-      row[question.id] = getOptionLabel(question.id, response.answers?.[question.id] || "");
+      row[question.id] = formatAnswerExport(question.id, response.answers?.[question.id]);
     });
 
     return row;
@@ -364,26 +484,50 @@ adminLogin.addEventListener("submit", async (event) => {
     return;
   }
 
+  if (getStoreMode() !== "firebase") {
+    adminLoginMessage.textContent = "Admin chỉ hỗ trợ đăng nhập Firebase.";
+    return;
+  }
+
+  adminLoginMessage.textContent = "Đang đăng nhập...";
+
   try {
-    if (canUseFallbackLogin(adminId, password)) {
-      adminLogin.hidden = true;
-      adminContent.hidden = false;
-      await loadResponses();
-      return;
-    }
-
-    if (getStoreMode() === "local") {
-      throw new Error("Admin ID hoặc mật khẩu không đúng.");
-    }
-
     await signInAdmin(adminId, password);
-    adminLogin.hidden = true;
-    adminContent.hidden = false;
+    saveAdminSession();
+    showAdminDashboard();
     await loadResponses();
+    adminLoginMessage.textContent = "";
   } catch (error) {
+    clearAdminSession();
     adminLoginMessage.textContent = `Đăng nhập không thành công: ${getFriendlyAuthError(error)}`;
   }
 });
+
+deleteAllDataButton.addEventListener("click", () => {
+  deleteDataDialog.showModal();
+});
+
+cancelDeleteDataButton.addEventListener("click", () => {
+  deleteDataDialog.close();
+});
+
+confirmDeleteDataButton.addEventListener("click", async () => {
+  confirmDeleteDataButton.disabled = true;
+
+  try {
+    await requireFirebaseAdmin();
+    const result = await deleteAllSurveyResponses();
+    deleteDataDialog.close();
+    await loadResponses();
+    filterSummary.textContent = `Đã xóa ${result.count} bản ghi khảo sát.`;
+  } catch (error) {
+    filterSummary.textContent = `Không thể xóa dữ liệu: ${error.message}`;
+  } finally {
+    confirmDeleteDataButton.disabled = false;
+  }
+});
+
+closeDialogOnBackdropClick(deleteDataDialog);
 
 refreshDataButton.addEventListener("click", loadResponses);
 exportCsvButton.addEventListener("click", exportCsv);
@@ -411,4 +555,6 @@ clearDateFilterButton.addEventListener("click", () => {
   filterEndDateInput.value = "";
   applyDateFilter();
 });
+
+restoreAdminSession();
 })();

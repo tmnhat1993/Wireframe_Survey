@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Survey App</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="./styles.css?v=20260606-07" />
+    <link rel="stylesheet" href="./styles.css?v=20260606-24" />
   </head>
   <body>
     <main class="app-shell">
@@ -106,46 +106,65 @@
       </section>
 
       <section class="screen" id="screen-submit" aria-labelledby="submit-title">
-        <div class="center-panel">
-          <div class="dummy-logo" aria-label="Logo mẫu"><span>LOGO</span></div>
-          <div class="loader" aria-hidden="true"></div>
+        <img class="submit-logo" src="./assets/img/main-logo.png" alt="Logo chương trình" />
+        <div class="center-panel submit-panel">
+          <img class="submit-loading-img" src="./assets/img/loading-img.png" alt="" />
           <h1 id="submit-title">Đang ghi nhận khảo sát</h1>
-          <p class="helper-text" id="submit-status">Vui lòng chờ trong giây lát.</p>
+          <p class="submit-status" id="submit-status">Vui lòng chờ trong giây lát.</p>
           <button class="secondary-button" type="button" id="retry-submit" hidden>Thử gửi lại</button>
         </div>
       </section>
 
       <section class="screen" id="screen-thanks" aria-labelledby="thanks-title">
-        <div class="center-panel">
-          <div class="dummy-logo" aria-label="Logo mẫu"><span>LOGO</span></div>
-          <div class="status-mark">✓</div>
-          <h1 id="thanks-title">Cảm ơn quý khách đã tham gia chương trình khảo sát của chúng tôi</h1>
-          <p class="helper-text" id="success-message">Khảo sát của bạn đã được ghi nhận thành công.</p>
-          <button class="primary-button" type="button" id="new-survey" hidden>Thực hiện khảo sát mới</button>
+        <img class="submit-logo" src="./assets/img/main-logo.png" alt="Logo chương trình" />
+        <div class="center-panel thanks-panel">
+          <h1 id="thanks-title">
+            Cảm ơn quý khách đã<br />
+            tham gia chương trình<br />
+            khảo sát của chúng tôi
+          </h1>
+          <p class="submit-status" id="success-message">Khảo sát của bạn đã được ghi nhận thành công.</p>
+          <button class="image-button thanks-redo-button" type="button" id="new-survey">
+            <img src="./assets/img/btn-redo.png" alt="Thực hiện khảo sát mới" />
+          </button>
         </div>
+        <img class="thanks-bottom-img" src="./assets/img/thankyou-bottom-img.png" alt="" />
       </section>
     </main>
 
     <dialog class="policy-dialog" id="policy-dialog" aria-labelledby="policy-title">
-      <h2 id="policy-title">Quy định chia sẻ thông tin</h2>
+      <h2 id="policy-title">Quy định<br />chia sẻ thông tin</h2>
       <div class="policy-copy">
         <p>Thông tin cá nhân được thu thập nhằm xác nhận người tham gia, tổng hợp kết quả khảo sát, liên hệ khi cần thiết về chương trình và chăm sóc khách hàng theo phạm vi bạn đã đồng ý.</p>
         <p>Thông tin có thể bao gồm họ tên, giới tính, độ tuổi, thời điểm tham gia và câu trả lời khảo sát. Nếu bạn không đồng ý chia sẻ thông tin, hệ thống chỉ lưu kết quả khảo sát dưới dạng ẩn danh.</p>
         <p>Dữ liệu được bảo mật, chỉ nhân sự hoặc đơn vị xử lý dữ liệu được ủy quyền mới được tiếp cận cho mục đích vận hành chương trình. Chúng tôi không bán hoặc chia sẻ thông tin cho bên thứ ba nếu không có sự đồng ý của bạn hoặc yêu cầu hợp pháp của cơ quan có thẩm quyền.</p>
         <p>Bạn có quyền yêu cầu kiểm tra, cập nhật, rút lại đồng ý hoặc xóa thông tin cá nhân theo quy định pháp luật Việt Nam về bảo vệ dữ liệu cá nhân.</p>
       </div>
-      <button class="primary-button" type="button" id="close-policy">Đã hiểu</button>
+      <div class="policy-dialog-footer">
+        <img class="policy-modal-bg" src="./assets/img/policy-modal-bg.png" alt="" aria-hidden="true" />
+        <button class="image-button policy-understand-button" type="button" id="close-policy">
+          <img src="./assets/img/btn-understand.png" alt="Đã hiểu" />
+        </button>
+      </div>
     </dialog>
 
     <dialog class="policy-dialog" id="anonymous-dialog" aria-labelledby="anonymous-title">
+      <img class="anonymous-decor anonymous-decor-top" src="./assets/img/anonymous-img-1.png" alt="" aria-hidden="true" />
+      <img class="anonymous-decor anonymous-decor-bottom" src="./assets/img/anonymous-img-2.png" alt="" aria-hidden="true" />
       <h2 id="anonymous-title">Khảo sát ẩn danh</h2>
-      <p>Thông tin khảo sát của bạn sẽ được hệ thống ghi nhận là khách hàng ẩn danh. Chúng tôi sẽ không lưu lại thông tin này trong hệ thống.</p>
-      <button class="primary-button" type="button" id="confirm-anonymous">Đã hiểu &amp; Tiếp tục khảo sát</button>
+      <div class="anonymous-copy">
+        <p>Thông tin khảo sát của bạn sẽ được hệ thống ghi nhận là khách hàng ẩn danh. Chúng tôi sẽ không lưu lại thông tin này trong hệ thống.</p>
+      </div>
+      <div class="policy-dialog-footer anonymous-dialog-footer">
+        <button class="image-button anonymous-continue-button" type="button" id="confirm-anonymous">
+          <img src="./assets/img/btn-understand-and-continue.png" alt="Đã hiểu &amp; Tiếp tục khảo sát" />
+        </button>
+      </div>
     </dialog>
 
     <script src="./firebase-config.js?v=20260606-07"></script>
     <script src="./questions.js?v=20260606-07"></script>
     <script src="./survey-store.js?v=20260606-07"></script>
-    <script src="./app.js?v=20260606-07"></script>
+    <script src="./app.js?v=20260606-14"></script>
   </body>
 </html>

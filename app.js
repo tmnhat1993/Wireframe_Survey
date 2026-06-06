@@ -30,6 +30,7 @@ const successMessage = document.querySelector("#success-message");
 const debugModeInput = document.querySelector("#debug-mode");
 
 const COMPLETION_STORAGE_KEY = "survey-app-completed-participant";
+const SUCCESS_MESSAGE = "Khảo sát của bạn đã được ghi nhận thành công.";
 const DEBUG_STORAGE_KEY = "survey-app-debug-mode";
 const LOCAL_RESPONSES_STORAGE_KEY = "survey-app-responses";
 const DATA_VERSION_STORAGE_KEY = "survey-app-data-version";
@@ -46,6 +47,14 @@ const surveyState = {
   },
   answers: {}
 };
+
+function closeDialogOnBackdropClick(dialog) {
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) {
+      dialog.close();
+    }
+  });
+}
 
 function showRoute(route) {
   screens.forEach((screen) => {
@@ -79,7 +88,6 @@ function isDebugMode() {
 
 function syncDebugMode() {
   debugModeInput.checked = localStorage.getItem(DEBUG_STORAGE_KEY) === "true";
-  newSurveyButton.hidden = !isDebugMode();
 }
 
 function enforceCompletionGate() {
@@ -89,8 +97,7 @@ function enforceCompletionGate() {
     return;
   }
 
-  successMessage.textContent = "Bạn đã hoàn thành khảo sát. Hệ thống đã ghi nhận lượt tham gia của bạn.";
-  newSurveyButton.hidden = true;
+  successMessage.textContent = SUCCESS_MESSAGE;
   showRoute("thanks");
 }
 
@@ -238,7 +245,7 @@ function buildPayload() {
   const { fullName, gender, ageRange, consentGiven } = surveyState.participant;
   const participant = consentGiven
     ? { fullName, gender, ageRange }
-    : { gender, ageRange };
+    : {};
 
   return {
     submittedAt: new Date().toISOString(),
@@ -259,7 +266,7 @@ function markSurveyCompleted(result) {
   const { fullName, gender, ageRange, consentGiven } = surveyState.participant;
   const participant = consentGiven
     ? { fullName, gender, ageRange }
-    : { gender, ageRange };
+    : {};
   const completedRecord = {
     completedAt: new Date().toISOString(),
     responseId: result.id,
@@ -297,12 +304,7 @@ async function submitSurvey() {
   try {
     const result = await saveSurveyResponse(buildPayload());
     markSurveyCompleted(result);
-    const actionText = result.mode === "overwrite" ? "cập nhật" : "ghi nhận";
-    successMessage.textContent =
-      result.provider === "firebase"
-        ? `Khảo sát của bạn đã được ${actionText} thành công trên hệ thống.`
-        : `Khảo sát của bạn đã được ${actionText} thành công ở chế độ local demo.`;
-    newSurveyButton.hidden = !isDebugMode();
+    successMessage.textContent = SUCCESS_MESSAGE;
     showRoute("thanks");
   } catch (error) {
     submitStatus.textContent = `Không thể ghi dữ liệu: ${error.message}`;
@@ -313,6 +315,7 @@ async function submitSurvey() {
 }
 
 function resetSurvey() {
+  localStorage.removeItem(COMPLETION_STORAGE_KEY);
   participantForm.reset();
   ageRangeInput.value = "";
   ageRangeButtons.forEach((button) => button.classList.remove("is-selected"));
@@ -407,6 +410,9 @@ closePolicyButton.addEventListener("click", () => {
   policyDialog.close();
 });
 
+closeDialogOnBackdropClick(policyDialog);
+closeDialogOnBackdropClick(anonymousDialog);
+
 confirmAnonymousButton.addEventListener("click", () => {
   anonymousDialog.close();
   startQuiz();
@@ -438,14 +444,11 @@ nextQuestionButton.addEventListener("click", () => {
 
 retrySubmitButton.addEventListener("click", submitSurvey);
 newSurveyButton.addEventListener("click", () => {
-  if (isDebugMode()) {
-    resetSurvey();
-  }
+  resetSurvey();
 });
 
 debugModeInput.addEventListener("change", () => {
   localStorage.setItem(DEBUG_STORAGE_KEY, String(debugModeInput.checked));
-  newSurveyButton.hidden = !isDebugMode();
   enforceCompletionGate();
 });
 })();
