@@ -200,7 +200,7 @@ button {
 
 #screen-info {
   position: relative;
-  min-height: 230vw;
+  min-height: 210vw;
   max-height: 100vh;
   padding-bottom: 0;
   overflow-x: hidden;
@@ -545,7 +545,7 @@ h2 {
 
 #screen-quiz {
   position: relative;
-  min-height: 100dvh;
+  min-height: 200vw;
   max-height: 225vw;
   padding-bottom: 0;
   overflow: hidden;
@@ -1615,7 +1615,7 @@ th {
   }
 
   #screen-quiz {
-    min-height: 230vw;
+    min-height: 200vw;
     max-height: 100vh;
   }
 
@@ -1754,5 +1754,12 @@ th {
 @media (max-width: 767px) {
   .top-nav {
     display: none;
+  }
+}
+
+@media (min-width: 481px) {
+  #screen-info,
+  .admin-login-screen {
+    min-height: 100vh;
   }
 }
