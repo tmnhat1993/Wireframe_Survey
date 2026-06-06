@@ -29,7 +29,6 @@ const submitStatus = document.querySelector("#submit-status");
 const retrySubmitButton = document.querySelector("#retry-submit");
 const newSurveyButton = document.querySelector("#new-survey");
 const successMessage = document.querySelector("#success-message");
-const debugModeInput = document.querySelector("#debug-mode");
 
 const COMPLETION_STORAGE_KEY = "survey-app-completed-participant";
 const SUCCESS_MESSAGE = "Khảo sát của bạn đã được ghi nhận thành công.";
@@ -112,11 +111,7 @@ function resetLocalDataWhenVersionChanges() {
 }
 
 function isDebugMode() {
-  return debugModeInput.checked;
-}
-
-function syncDebugMode() {
-  debugModeInput.checked = localStorage.getItem(DEBUG_STORAGE_KEY) === "true";
+  return localStorage.getItem(DEBUG_STORAGE_KEY) === "true";
 }
 
 function enforceCompletionGate() {
@@ -368,7 +363,6 @@ function resetSurvey() {
 resetLocalDataWhenVersionChanges();
 renderQuestions();
 showQuestion(0);
-syncDebugMode();
 enforceCompletionGate();
 
 if (document.querySelector("#screen-intro").classList.contains("is-active")) {
@@ -478,10 +472,5 @@ nextQuestionButton.addEventListener("click", () => {
 retrySubmitButton.addEventListener("click", submitSurvey);
 newSurveyButton.addEventListener("click", () => {
   resetSurvey();
-});
-
-debugModeInput.addEventListener("change", () => {
-  localStorage.setItem(DEBUG_STORAGE_KEY, String(debugModeInput.checked));
-  enforceCompletionGate();
 });
 })();
