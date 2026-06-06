@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Survey App</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="./styles.css?v=20260606-02" />
+    <link rel="stylesheet" href="./styles.css?v=20260606-03" />
   </head>
   <body>
     <main class="app-shell">
@@ -38,7 +38,7 @@
             <small class="field-error" id="full-name-error"></small>
           </label>
 
-          <fieldset class="choice-field">
+          <fieldset class="choice-field gender-field">
             <legend>Giới tính</legend>
             <div class="gender-options">
               <label><input type="radio" name="gender" value="male" /> Nam</label>
@@ -51,7 +51,7 @@
             <legend>Độ tuổi</legend>
             <input id="age-range" name="ageRange" type="hidden" />
             <div class="age-options">
-              <button type="button" data-age-range="18-24">18-24 tuổi</button>
+              <button type="button" data-age-range="18-24">18 - 24 tuổi</button>
               <button type="button" data-age-range="24-45">24 - 45 tuổi</button>
               <button type="button" data-age-range="45+">Trên 45 tuổi</button>
             </div>
@@ -130,9 +130,9 @@
       <button class="primary-button" type="button" id="confirm-anonymous">Đã hiểu &amp; Tiếp tục khảo sát</button>
     </dialog>
 
-    <script src="./firebase-config.js"></script>
-    <script src="./questions.js"></script>
-    <script src="./survey-store.js"></script>
-    <script src="./app.js"></script>
+    <script src="./firebase-config.js?v=20260606-03"></script>
+    <script src="./questions.js?v=20260606-03"></script>
+    <script src="./survey-store.js?v=20260606-03"></script>
+    <script src="./app.js?v=20260606-03"></script>
   </body>
 </html>

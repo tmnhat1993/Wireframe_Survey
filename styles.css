@@ -48,7 +48,7 @@ button {
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--text-highlight);
+  color: var(--text-main);
   font-weight: 700;
   text-align: left;
   text-decoration: underline;
@@ -244,18 +244,18 @@ button {
   z-index: 1;
 }
 
-.info-form .field,
-.choice-field {
+.info-form .field {
   gap: 0;
 }
 
 .info-form .field span,
 .choice-field legend {
   display: block;
-  color: var(--text-on-white);
+  margin-bottom: 5px;
+  color: var(--text-highlight);
   font-size: 15px;
-  font-weight: 700;
-  line-height: 56px;
+  font-weight: 600;
+  line-height: 1.35;
 }
 
 .info-form .field input {
@@ -271,10 +271,27 @@ button {
 }
 
 .choice-field {
+  display: grid;
+  gap: 0;
   min-width: 0;
   margin: 0;
   padding: 0;
   border: 0;
+}
+
+.gender-field {
+  grid-template-columns: auto 1fr;
+  column-gap: 18px;
+  align-items: center;
+}
+
+.gender-field .field-error {
+  grid-column: 1 / -1;
+}
+
+.gender-field legend {
+  margin: 0;
+  line-height: 32px;
 }
 
 .gender-options,
@@ -284,48 +301,80 @@ button {
 }
 
 .gender-options {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, auto);
+  align-items: center;
+  justify-content: start;
+  gap: 18px;
 }
 
 .age-options {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.gender-options label,
 .age-options button {
   display: grid;
   place-items: center;
   min-height: 56px;
-  padding: 0 14px;
+  padding: 0 10px;
   border: 1px solid var(--text-on-white);
   border-radius: 28px;
   background: #ffffff;
   color: var(--text-on-white);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
   text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .gender-options label {
-  grid-template-columns: 18px auto;
+  display: grid;
+  grid-template-columns: 24px auto;
   gap: 8px;
-  justify-content: center;
+  align-items: center;
+  min-height: 32px;
+  color: var(--text-main);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .gender-options input {
-  width: 16px;
-  height: 16px;
+  position: relative;
+  width: 24px;
+  height: 24px;
   margin: 0;
-  accent-color: var(--text-on-white);
+  border: 1px solid var(--text-on-white);
+  border-radius: 50%;
+  appearance: none;
+  background: #ffffff;
 }
 
-.age-options button.is-selected {
-  border-color: var(--text-highlight);
+.gender-options input:checked {
+  border: 3px solid #ffffff;
   background: var(--text-highlight);
 }
 
+.gender-options input:checked::after {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 11px;
+  height: 6px;
+  border-bottom: 3px solid #ffffff;
+  border-left: 3px solid #ffffff;
+  content: "";
+  transform: rotate(-45deg);
+}
+
+.age-options button.is-selected {
+  border: 6px solid #ffffff;
+  background: var(--text-highlight);
+  font-weight: 800;
+}
+
 .continue-survey-button {
-  width: 220px;
+  width: 100%;
   margin-top: 12px;
 }
 
@@ -417,15 +466,42 @@ h2 {
 
 .checkbox-row {
   display: grid;
-  grid-template-columns: 22px 1fr;
-  gap: 10px;
+  grid-template-columns: 25px 1fr;
+  gap: 14px;
   align-items: start;
   color: var(--text-main);
   font-size: 14px;
   line-height: 1.4;
 }
 
-.checkbox-row input,
+.checkbox-row input {
+  position: relative;
+  width: 25px;
+  height: 25px;
+  margin: 0;
+  border: 1px solid #ffffff;
+  border-radius: 2px;
+  appearance: none;
+  background: transparent;
+}
+
+.checkbox-row input:checked {
+  border: 3px solid #ffffff;
+  background: var(--text-highlight);
+}
+
+.checkbox-row input:checked::after {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  width: 14px;
+  height: 8px;
+  border-bottom: 4px solid #ffffff;
+  border-left: 4px solid #ffffff;
+  content: "";
+  transform: rotate(-45deg);
+}
+
 .question-card input {
   width: 18px;
   height: 18px;
@@ -826,10 +902,6 @@ th {
 }
 
 @media (max-width: 520px) {
-  .age-options {
-    grid-template-columns: 1fr;
-  }
-
   .admin-shell .screen {
     padding: 22px 0 96px;
   }
