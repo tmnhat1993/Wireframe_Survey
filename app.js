@@ -4,6 +4,8 @@ const { getStoreMode, saveSurveyResponse } = window.SurveyStore;
 
 const screens = document.querySelectorAll(".screen");
 const startSurveyButton = document.querySelector("#start-survey");
+const introLogo = document.querySelector(".intro-logo");
+const introIllustration = document.querySelector(".intro-illustration");
 const participantForm = document.querySelector("#participant-form");
 const fullNameInput = document.querySelector("#full-name");
 const ageRangeInput = document.querySelector("#age-range");
@@ -61,7 +63,34 @@ function showRoute(route) {
     screen.classList.toggle("is-active", screen.id === `screen-${route}`);
   });
 
+  if (route === "intro") {
+    playIntroAnimation();
+  }
+
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function playIntroAnimation() {
+  const introTargets = [introLogo, introIllustration, startSurveyButton];
+
+  if (!window.gsap) {
+    introTargets.forEach((element) => {
+      element.style.opacity = "1";
+      element.style.transform = "";
+    });
+    return;
+  }
+
+  gsap.killTweensOf(introTargets);
+  gsap.set(introLogo, { opacity: 0 });
+  gsap.set(introIllustration, { opacity: 0, y: 24 });
+  gsap.set(startSurveyButton, { opacity: 0, y: 0 });
+
+  gsap
+    .timeline({ defaults: { ease: "power2.out" } })
+    .to(introLogo, { opacity: 1, duration: 0.3 })
+    .to(introIllustration, { opacity: 1, y: 0, duration: 0.75 })
+    .to(startSurveyButton, { opacity: 1, duration: 0.3 }, "-=0.2");
 }
 
 function readCompletionRecord() {
@@ -341,6 +370,10 @@ renderQuestions();
 showQuestion(0);
 syncDebugMode();
 enforceCompletionGate();
+
+if (document.querySelector("#screen-intro").classList.contains("is-active")) {
+  playIntroAnimation();
+}
 
 startSurveyButton.addEventListener("click", () => {
   showRoute("info");

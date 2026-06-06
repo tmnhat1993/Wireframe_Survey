@@ -30,6 +30,7 @@ const filterSummary = document.querySelector("#filter-summary");
 const participantsPrevPageButton = document.querySelector("#participants-prev-page");
 const participantsNextPageButton = document.querySelector("#participants-next-page");
 const participantsPageSummary = document.querySelector("#participants-page-summary");
+const participantsListSummary = document.querySelector("#participants-list-summary");
 
 let allResponses = [];
 let filteredResponses = [];
@@ -386,9 +387,8 @@ function renderParticipantsTable() {
     `;
   }
 
-  const firstItem = filteredResponses.length ? startIndex + 1 : 0;
-  const lastItem = Math.min(startIndex + pageResponses.length, filteredResponses.length);
-  participantsPageSummary.textContent = `Trang ${currentParticipantsPage}/${pageCount} · ${firstItem}-${lastItem}/${filteredResponses.length}`;
+  participantsPageSummary.textContent = `${currentParticipantsPage} / ${pageCount}`;
+  participantsListSummary.textContent = `Tổng cộng ${filteredResponses.length} kết quả · ${PARTICIPANTS_PAGE_SIZE} kết quả / trang`;
   participantsPrevPageButton.disabled = currentParticipantsPage <= 1;
   participantsNextPageButton.disabled = currentParticipantsPage >= pageCount;
 }

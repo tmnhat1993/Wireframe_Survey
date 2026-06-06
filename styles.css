@@ -170,10 +170,22 @@ button {
   margin-bottom: 20px;
 }
 
+#screen-intro {
+  height: 100vh;
+  max-height: 100vh;
+}
+
+#screen-intro.is-active {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .intro-panel {
   display: grid;
+  justify-items: center;
   align-content: center;
-  min-height: calc(100vh - 118px);
+  width: 100%;
 }
 
 .intro-logo {
@@ -185,9 +197,19 @@ button {
 
 .intro-illustration {
   display: block;
-  width: min(90%, 352px);
+  width: 73%;
   height: auto;
   margin: 0 auto 40px;
+}
+
+#screen-intro .intro-logo,
+#screen-intro .intro-illustration,
+#screen-intro #start-survey {
+  opacity: 0;
+}
+
+#screen-intro .intro-illustration {
+  transform: translateY(24px);
 }
 
 .image-button {
@@ -1116,9 +1138,27 @@ th {
 
 .pagination-controls {
   display: grid;
-  grid-template-columns: minmax(120px, 1fr) auto minmax(120px, 1fr);
+  grid-template-columns: auto 1fr auto;
   gap: 10px;
   align-items: center;
+}
+
+.pagination-arrow-button {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #b8c2d1;
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--text-on-white);
+}
+
+.pagination-arrow-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 .pagination-controls span {
@@ -1287,7 +1327,14 @@ th {
 }
 
 .admin-section h2 {
-  margin: 10px 0 0;
+  margin: 24px 0 0;
+}
+
+.participants-list-summary {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .answer-charts {
@@ -1528,7 +1575,7 @@ th {
   }
 
   .intro-logo {
-    margin: 90px auto 60px;
+    margin: 0 auto 40px;
   }
 
   .image-button {

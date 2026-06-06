@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Survey Admin</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="./styles.css?v=20260606-37" />
+    <link rel="stylesheet" href="./styles.css?v=20260606-41" />
   </head>
   <body>
     <main class="app-shell admin-shell">
@@ -92,6 +92,7 @@
 
           <section class="admin-section" aria-labelledby="participants-heading">
             <h2 id="participants-heading">Danh sách người tham gia</h2>
+            <p class="participants-list-summary" id="participants-list-summary"></p>
             <div class="table-frame">
               <table>
                 <thead>
@@ -107,9 +108,17 @@
               </table>
             </div>
             <div class="pagination-controls" aria-label="Phân trang danh sách người tham gia">
-              <button class="secondary-button" type="button" id="participants-prev-page">Trang trước</button>
-              <span id="participants-page-summary">Trang 1/1</span>
-              <button class="secondary-button" type="button" id="participants-next-page">Trang sau</button>
+              <button class="pagination-arrow-button" type="button" id="participants-prev-page" aria-label="Trang trước">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M12 4L6 10L12 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+              <span id="participants-page-summary">1 / 1</span>
+              <button class="pagination-arrow-button" type="button" id="participants-next-page" aria-label="Trang sau">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M8 4L14 10L8 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
             </div>
           </section>
           </div>
@@ -131,6 +140,6 @@
     <script src="./firebase-config.js?v=20260606-07"></script>
     <script src="./questions.js?v=20260606-07"></script>
     <script src="./survey-store.js?v=20260606-03"></script>
-    <script src="./admin.js?v=20260606-04"></script>
+    <script src="./admin.js?v=20260606-06"></script>
   </body>
 </html>
