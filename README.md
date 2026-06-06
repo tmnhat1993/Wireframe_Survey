@@ -79,7 +79,7 @@ Useful Vercel URLs:
 ## Data behavior
 
 - If the participant consents, the app stores `fullName`, `gender`, and `ageRange`.
-- If the participant does not consent, the app stores an anonymous survey response and does not store personal information.
+- If the participant does not consent, the app stores an anonymous survey response with `gender` and `ageRange`, but does not store `fullName`.
 - Each response includes `submittedAt`, the browser-side survey submit timestamp used by Admin date filtering and CSV export.
 - The survey only shows success after the response is saved.
 - After a browser completes the survey, the app stores a local completion marker and blocks retakes on reload.

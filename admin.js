@@ -161,14 +161,19 @@ function summarizeAnswers(items) {
     question.options.forEach((option) => {
       summary[question.id][option.id] = 0;
     });
+
+    if (question.other) {
+      summary[question.id][question.other.id] = 0;
+    }
   });
 
   items.forEach((response) => {
-    Object.entries(response.answers || {}).forEach(([questionId, optionId]) => {
+    Object.entries(response.answers || {}).forEach(([questionId, answer]) => {
       if (!summary[questionId]) {
         summary[questionId] = {};
       }
 
+      const optionId = answer?.type === "other" ? "other" : answer;
       summary[questionId][optionId] = (summary[questionId][optionId] || 0) + 1;
     });
   });
@@ -186,8 +191,9 @@ function renderAnswerCharts() {
   const summary = summarizeAnswers(filteredResponses);
 
   answerCharts.innerHTML = QUESTIONS.map((question, questionIndex) => {
-    const total = question.options.reduce((sum, option) => sum + (summary[question.id]?.[option.id] || 0), 0);
-    const rows = question.options
+    const answerOptions = question.other ? [...question.options, question.other] : question.options;
+    const total = answerOptions.reduce((sum, option) => sum + (summary[question.id]?.[option.id] || 0), 0);
+    const rows = answerOptions
       .map((option) => {
       const count = summary[question.id]?.[option.id] || 0;
         const percent = total > 0 ? Math.round((count / total) * 100) : 0;

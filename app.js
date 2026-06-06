@@ -30,6 +30,8 @@ const debugModeInput = document.querySelector("#debug-mode");
 
 const COMPLETION_STORAGE_KEY = "survey-app-completed-participant";
 const DEBUG_STORAGE_KEY = "survey-app-debug-mode";
+const LOCAL_RESPONSES_STORAGE_KEY = "survey-app-responses";
+const DATA_VERSION_STORAGE_KEY = "survey-app-data-version";
 
 let activeQuestionIndex = 0;
 let isSubmitting = false;
@@ -58,6 +60,16 @@ function readCompletionRecord() {
   } catch {
     return null;
   }
+}
+
+function resetLocalDataWhenVersionChanges() {
+  if (localStorage.getItem(DATA_VERSION_STORAGE_KEY) === SURVEY_VERSION) {
+    return;
+  }
+
+  localStorage.removeItem(LOCAL_RESPONSES_STORAGE_KEY);
+  localStorage.removeItem(COMPLETION_STORAGE_KEY);
+  localStorage.setItem(DATA_VERSION_STORAGE_KEY, SURVEY_VERSION);
 }
 
 function isDebugMode() {
@@ -144,11 +156,23 @@ function renderQuestions() {
         `
       )
       .join("");
+    const otherInput = question.other
+      ? `
+          <textarea
+            class="other-answer"
+            name="${question.id}-other"
+            data-other-question="${question.id}"
+            rows="4"
+            placeholder="${question.other.placeholder}"
+          ></textarea>
+        `
+      : "";
 
     return `
       <article class="question-card ${index === 0 ? "is-active" : ""}" data-question="${index}">
         <h2>${index + 1}. ${question.text}</h2>
         ${options}
+        ${otherInput}
       </article>
     `;
   }).join("");
@@ -174,9 +198,21 @@ function getActiveQuestion() {
 
 function persistCurrentAnswer() {
   const question = getActiveQuestion();
+  const otherInput = document.querySelector(`[data-other-question="${question.id}"]`);
+  const otherValue = normalizeSpaces(otherInput?.value || "");
+
+  if (otherValue) {
+    surveyState.answers[question.id] = {
+      type: "other",
+      text: otherValue
+    };
+    return true;
+  }
+
   const selectedOption = document.querySelector(`input[name="${question.id}"]:checked`);
 
   if (!selectedOption) {
+    delete surveyState.answers[question.id];
     return false;
   }
 
@@ -190,12 +226,15 @@ function validateAllAnswers() {
 
 function buildPayload() {
   const { fullName, gender, ageRange, consentGiven } = surveyState.participant;
+  const participant = consentGiven
+    ? { fullName, gender, ageRange }
+    : { gender, ageRange };
 
   return {
     submittedAt: new Date().toISOString(),
     consentGiven,
     anonymous: !consentGiven,
-    participant: consentGiven ? { fullName, gender, ageRange } : null,
+    participant,
     answers: { ...surveyState.answers },
     metadata: {
       source: "web",
@@ -208,13 +247,16 @@ function buildPayload() {
 
 function markSurveyCompleted(result) {
   const { fullName, gender, ageRange, consentGiven } = surveyState.participant;
+  const participant = consentGiven
+    ? { fullName, gender, ageRange }
+    : { gender, ageRange };
   const completedRecord = {
     completedAt: new Date().toISOString(),
     responseId: result.id,
     provider: result.provider,
     consentGiven,
     anonymous: !consentGiven,
-    participant: consentGiven ? { fullName, gender, ageRange } : null
+    participant
   };
 
   localStorage.setItem(COMPLETION_STORAGE_KEY, JSON.stringify(completedRecord));
@@ -267,6 +309,9 @@ function resetSurvey() {
   document.querySelectorAll(".question-card input").forEach((input) => {
     input.checked = false;
   });
+  document.querySelectorAll(".other-answer").forEach((textarea) => {
+    textarea.value = "";
+  });
   fullNameError.textContent = "";
   genderError.textContent = "";
   ageRangeError.textContent = "";
@@ -275,6 +320,7 @@ function resetSurvey() {
   showRoute("intro");
 }
 
+resetLocalDataWhenVersionChanges();
 renderQuestions();
 showQuestion(0);
 syncDebugMode();
@@ -307,6 +353,32 @@ participantForm.addEventListener("submit", (event) => {
 
 questionList.addEventListener("change", (event) => {
   if (event.target.matches("input[type='radio']")) {
+    const question = QUESTIONS.find((item) => item.id === event.target.name);
+    const otherInput = question?.other ? document.querySelector(`[data-other-question="${question.id}"]`) : null;
+
+    if (otherInput) {
+      otherInput.value = "";
+    }
+
+    persistCurrentAnswer();
+    questionError.textContent = "";
+  }
+});
+
+questionList.addEventListener("input", (event) => {
+  if (!event.target.matches(".other-answer")) {
+    return;
+  }
+
+  const questionId = event.target.dataset.otherQuestion;
+
+  if (normalizeSpaces(event.target.value)) {
+    document.querySelectorAll(`input[name="${questionId}"]`).forEach((input) => {
+      input.checked = false;
+    });
+  }
+
+  if (questionId === getActiveQuestion().id) {
     persistCurrentAnswer();
     questionError.textContent = "";
   }

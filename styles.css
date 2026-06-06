@@ -571,6 +571,24 @@ h2 {
   font-size: 14px;
 }
 
+.other-answer {
+  width: 100%;
+  min-height: 96px;
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid #b8c2d1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--text-on-white);
+  font-size: 14px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.other-answer::placeholder {
+  color: rgba(16, 7, 160, 0.68);
+}
+
 .sticky-actions {
   position: sticky;
   bottom: 0;

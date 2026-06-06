@@ -1,66 +1,68 @@
 (function () {
-const SURVEY_VERSION = "1.0.0";
+const SURVEY_VERSION = "2.0.0";
 
 const QUESTIONS = [
   {
     id: "q1",
-    text: "Bạn biết đến chương trình qua kênh nào?",
+    text: "Bạn có đang sử dụng chế độ giặt nhanh tại nhà không?",
     options: [
-      { id: "social", label: "Mạng xã hội" },
-      { id: "friend", label: "Bạn bè giới thiệu" },
-      { id: "website", label: "Website" },
-      { id: "store", label: "Tại cửa hàng" }
+      { id: "A", label: "Đang sử dụng chế độ giặt nhanh" },
+      { id: "B", label: "Đã từng sử dụng nhưng không phù hợp" },
+      { id: "C", label: "Chưa từng sử dụng" }
     ]
   },
   {
     id: "q2",
-    text: "Bạn đánh giá trải nghiệm tổng thể như thế nào?",
+    text: "Bạn đánh giá thế nào về độ sạch của quần áo sau khi sử dụng chế độ giặt nhanh 15 phút cùng sản phẩm OMO Siêu Tốc?",
     options: [
-      { id: "very_satisfied", label: "Rất hài lòng" },
-      { id: "satisfied", label: "Hài lòng" },
-      { id: "neutral", label: "Bình thường" },
-      { id: "unsatisfied", label: "Chưa hài lòng" }
+      { id: "A", label: "Không sạch" },
+      { id: "B", label: "Bình thường" },
+      { id: "C", label: "Rất sạch" }
     ]
   },
   {
     id: "q3",
-    text: "Nội dung chương trình có dễ hiểu không?",
+    text: "Bạn đánh giá thế nào về mùi hương của sản phẩm OMO Siêu Tốc lưu lại trên quần áo không?",
     options: [
-      { id: "very_easy", label: "Rất dễ hiểu" },
-      { id: "easy", label: "Dễ hiểu" },
-      { id: "needs_clearer", label: "Cần rõ hơn" },
-      { id: "difficult", label: "Khó hiểu" }
+      { id: "A", label: "Không thơm" },
+      { id: "B", label: "Bình thường" },
+      { id: "C", label: "Rất thơm" }
     ]
   },
   {
     id: "q4",
-    text: "Bạn quan tâm nhất đến yếu tố nào?",
+    text: "Bạn ấn tượng gì nhất về Omo Siêu tốc?",
     options: [
-      { id: "gift", label: "Quà tặng" },
-      { id: "promotion", label: "Ưu đãi" },
-      { id: "consulting", label: "Nội dung tư vấn" },
-      { id: "time", label: "Thời gian tham gia" }
-    ]
+      { id: "A", label: "Tiết kiệm điện, nước và thời gian khi giặt nhanh" }
+    ],
+    other: {
+      id: "other",
+      label: "Khác",
+      placeholder: "Khác:..."
+    }
   },
   {
     id: "q5",
-    text: "Bạn có muốn nhận thông tin chương trình mới không?",
+    text: "Bạn sẽ mua OMO Siêu Tốc cho lần giặt tới của bạn không?",
     options: [
-      { id: "sms", label: "Có, qua SMS" },
-      { id: "email", label: "Có, qua email" },
-      { id: "call", label: "Có, qua cuộc gọi" },
-      { id: "no", label: "Không" }
+      { id: "A", label: "Chắc chắn sẽ mua" },
+      { id: "B", label: "Sẽ cân nhắc" },
+      { id: "C", label: "Chưa có nhu cầu" }
     ]
   },
   {
     id: "q6",
-    text: "Khả năng bạn giới thiệu chương trình cho người khác?",
+    text: "Bạn ấn tượng điều gì nhất trong trải nghiệm Đô Thị x OMO Siêu tốc? (Về sản phẩm, về trải nghiệm)",
     options: [
-      { id: "definitely", label: "Chắc chắn giới thiệu" },
-      { id: "maybe", label: "Có thể giới thiệu" },
-      { id: "not_sure", label: "Chưa chắc" },
-      { id: "never", label: "Không giới thiệu" }
-    ]
+      { id: "A", label: "Hiệu năng giặt nhanh trong 15 phút" },
+      { id: "B", label: "Xem demo giặt nhanh thực tế" },
+      { id: "C", label: "Trải nghiệm Trạm giặt siêu tốc rất mới mẻ" }
+    ],
+    other: {
+      id: "other",
+      label: "Khác",
+      placeholder: "Khác:..."
+    }
   }
 ];
 
@@ -70,6 +72,11 @@ function getQuestionText(questionId) {
 
 function getOptionLabel(questionId, optionId) {
   const question = QUESTIONS.find((item) => item.id === questionId);
+
+  if (typeof optionId === "object" && optionId?.type === "other") {
+    return `${question?.other?.label ?? "Khác"}: ${optionId.text}`;
+  }
+
   return question?.options.find((option) => option.id === optionId)?.label ?? optionId;
 }
 

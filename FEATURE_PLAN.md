@@ -86,20 +86,24 @@ Chuyen wireframe hien tai thanh ung dung survey co luu ket qua len Firebase, co 
   "consentGiven": true,
   "participant": {
     "fullName": "Nguyen Van A",
-    "phone": "0900000000"
+    "gender": "female",
+    "ageRange": "24-45"
   },
   "anonymous": false,
   "answers": {
-    "q1": "social",
-    "q2": "very_satisfied",
-    "q3": "easy",
-    "q4": "gift",
-    "q5": "sms",
-    "q6": "likely"
+    "q1": "A",
+    "q2": "B",
+    "q3": "C",
+    "q4": {
+      "type": "other",
+      "text": "Cau tra loi khac"
+    },
+    "q5": "A",
+    "q6": "C"
   },
   "metadata": {
     "source": "web",
-    "version": "1.0.0"
+    "version": "2.0.0"
   }
 }
 ```
