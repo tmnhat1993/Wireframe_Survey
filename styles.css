@@ -189,12 +189,25 @@ button {
   padding: 0;
   border: 0;
   background: transparent;
+  transition:
+    filter 0.1s ease,
+    transform 0.1s ease;
+  transform: scale(1);
 }
 
 .image-button img {
   display: block;
   width: 100%;
   height: auto;
+}
+
+.image-button:hover {
+  filter: brightness(1.05);
+}
+
+.image-button:active {
+  filter: brightness(0.9);
+  transform: scale(0.95);
 }
 
 #screen-info {
