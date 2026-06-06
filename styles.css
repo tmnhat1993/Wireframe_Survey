@@ -64,8 +64,6 @@ button {
 .app-shell {
   position: relative;
   width: min(100%, 480px);
-  min-height: 100vh;
-  min-height: 100dvh;
   margin: 0 auto;
   padding: 0;
   background: transparent;
