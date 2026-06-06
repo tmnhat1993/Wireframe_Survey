@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Survey Admin</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="./styles.css?v=20260606-34" />
+    <link rel="stylesheet" href="./styles.css?v=20260606-36" />
   </head>
   <body>
     <main class="app-shell admin-shell">
@@ -63,8 +63,9 @@
           </div>
 
           <div class="export-actions">
-            <button class="secondary-button" type="button" id="refresh-data">Tải lại</button>
-            <button class="primary-button" type="button" id="export-csv">Export CSV</button>
+            <div class="export-csv-bar" id="export-csv-bar">
+              <button class="primary-button" type="button" id="export-csv">Export CSV</button>
+            </div>
             <button class="danger-button" type="button" id="delete-all-data">Xóa tất cả dữ liệu</button>
           </div>
 
@@ -130,6 +131,6 @@
     <script src="./firebase-config.js?v=20260606-07"></script>
     <script src="./questions.js?v=20260606-07"></script>
     <script src="./survey-store.js?v=20260606-03"></script>
-    <script src="./admin.js?v=20260606-03"></script>
+    <script src="./admin.js?v=20260606-04"></script>
   </body>
 </html>

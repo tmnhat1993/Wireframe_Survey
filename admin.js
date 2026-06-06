@@ -16,8 +16,8 @@ const metricConsent = document.querySelector("#metric-consent");
 const metricAnonymous = document.querySelector("#metric-anonymous");
 const answerCharts = document.querySelector("#answer-charts");
 const participantsTableBody = document.querySelector("#participants-table-body");
-const refreshDataButton = document.querySelector("#refresh-data");
 const exportCsvButton = document.querySelector("#export-csv");
+const exportCsvBar = document.querySelector("#export-csv-bar");
 const deleteAllDataButton = document.querySelector("#delete-all-data");
 const deleteDataDialog = document.querySelector("#delete-data-dialog");
 const cancelDeleteDataButton = document.querySelector("#cancel-delete-data");
@@ -52,12 +52,15 @@ function clearAdminSession() {
 function showAdminDashboard() {
   adminLoginScreen.hidden = true;
   adminContent.hidden = false;
+  updateExportCsvFixed();
 }
 
 function showAdminLogin(message = "") {
   adminLoginScreen.hidden = false;
   adminContent.hidden = true;
   adminLoginMessage.textContent = message;
+  exportCsvBar.classList.remove("is-fixed");
+  adminContent.classList.remove("is-export-fixed");
 }
 
 async function requireFirebaseAdmin() {
@@ -462,6 +465,18 @@ function toCsvValue(value) {
   return `"${String(value ?? "").replace(/"/g, '""')}"`;
 }
 
+function updateExportCsvFixed() {
+  if (adminContent.hidden) {
+    exportCsvBar.classList.remove("is-fixed");
+    return;
+  }
+
+  const scrollThreshold = window.innerHeight * 0.3;
+  const isFixed = window.scrollY > scrollThreshold;
+  exportCsvBar.classList.toggle("is-fixed", isFixed);
+  adminContent.classList.toggle("is-export-fixed", isFixed);
+}
+
 function exportCsv() {
   const rows = flattenResponses();
   const headers = ["id", "submittedAt", "createdAt", "consentGiven", "anonymous", "fullName", "gender", "ageRange", ...QUESTIONS.map((question) => question.id)];
@@ -529,7 +544,9 @@ confirmDeleteDataButton.addEventListener("click", async () => {
 
 closeDialogOnBackdropClick(deleteDataDialog);
 
-refreshDataButton.addEventListener("click", loadResponses);
+window.addEventListener("scroll", updateExportCsvFixed, { passive: true });
+window.addEventListener("resize", updateExportCsvFixed);
+
 exportCsvButton.addEventListener("click", exportCsv);
 
 participantsPrevPageButton.addEventListener("click", () => {

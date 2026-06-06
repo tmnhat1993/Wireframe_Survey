@@ -224,8 +224,8 @@ button {
 
 #screen-info {
   position: relative;
-  min-height: 100dvh;
-  max-height: 225vw;
+  min-height: 210vw;
+  max-height: 100vh;
   padding-bottom: 0;
   overflow-x: hidden;
   overflow-y: auto;
@@ -609,7 +609,6 @@ h2 {
 }
 
 .quiz-content {
-  max-height: calc(100vh - 218px);
   padding-bottom: 0;
   overflow-y: auto;
 }
@@ -1008,8 +1007,37 @@ th {
 
 .export-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
+}
+
+.export-csv-bar .primary-button {
+  width: 100%;
+  margin: 0;
+}
+
+.export-csv-bar.is-fixed {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  z-index: 10;
+  width: min(100%, 480px);
+  padding: 20px;
+  background: #ffffff;
+  box-sizing: border-box;
+  transform: translateX(-50%);
+}
+
+.export-csv-bar.is-fixed .primary-button {
+  margin: 0;
+}
+
+.export-actions:has(.export-csv-bar.is-fixed) {
+  grid-template-columns: 1fr;
+}
+
+.admin-content.is-export-fixed .admin-dashboard-panel {
+  padding-bottom: 160px;
 }
 
 .danger-button {
@@ -1374,8 +1402,8 @@ th {
 
 .admin-login-screen {
   position: relative;
-  min-height: 100dvh;
-  max-height: 225vw;
+  min-height: 210vw;
+  max-height: 100vh;
 }
 
 .admin-login-panel {
@@ -1416,7 +1444,7 @@ th {
 }
 
 .admin-shell .screen {
-  padding: 22px 0 96px;
+  padding: 0;
 }
 
 .admin-shell .admin-screen {
@@ -1429,6 +1457,7 @@ th {
   min-height: 42px;
   padding: 0;
   margin: 12px 0;
+  font-size: 15px;
 }
 
 .admin-content {
@@ -1440,7 +1469,7 @@ th {
 .admin-dashboard-panel {
   position: relative;
   z-index: 1;
-  padding-top: 120px;
+  padding-top: 90px;
   padding-bottom: 96px;
 }
 
@@ -1514,6 +1543,14 @@ th {
     margin: 0 0 24px;
   }
 
+  .info-header {
+    padding-top: 120px;
+  }
+
+  .form-stack {
+    gap: 12px;
+  }
+
   #screen-info .info-form .field input {
     height: 50px;
     min-height: 50px;
@@ -1567,7 +1604,12 @@ th {
 
   .quiz-header {
     padding-top: 120px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
+  }
+
+  #screen-quiz {
+    min-height: 210vw;
+    max-height: 100vh;
   }
 
   .quiz-logo,
@@ -1593,6 +1635,19 @@ th {
     height: 5px;
     border-bottom: 2px solid #ffffff;
     border-left: 2px solid #ffffff;
+  }
+
+  .question-card {
+    margin-bottom: 20px;
+    padding: 20px 24px 20px;
+  }
+
+  .quiz-bottom-illustration[data-question="5"] {
+    left: 6%;
+  }
+
+  .thanks-redo-button {
+    margin-top: 12px;
   }
 
   .quiz-bottom-illustration[data-question="1"] {
@@ -1662,13 +1717,13 @@ th {
   #start-survey {
     width: 180px;
   }
+
+  #screen-info .age-options button {
+    min-height: 48px;
+  }
 }
 
 @media (max-width: 520px) {
-  .admin-shell .screen {
-    padding: 22px 0 96px;
-  }
-
   .admin-shell .filter-panel,
   .admin-shell .answer-charts {
     grid-template-columns: 1fr;
