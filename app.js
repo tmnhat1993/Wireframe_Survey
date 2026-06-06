@@ -22,6 +22,7 @@ const questionCounter = document.querySelector("#question-counter");
 const questionError = document.querySelector("#question-error");
 const previousQuestionButton = document.querySelector("#previous-question");
 const nextQuestionButton = document.querySelector("#next-question");
+const quizBottomIllustration = document.querySelector("#quiz-bottom-illustration");
 const submitStatus = document.querySelector("#submit-status");
 const retrySubmitButton = document.querySelector("#retry-submit");
 const newSurveyButton = document.querySelector("#new-survey");
@@ -188,8 +189,11 @@ function showQuestion(index) {
 
   questionError.textContent = "";
   questionCounter.textContent = `Câu ${activeQuestionIndex + 1}/${QUESTIONS.length}`;
-  previousQuestionButton.textContent = activeQuestionIndex === 0 ? "Quay lại" : "Câu trước";
-  nextQuestionButton.textContent = activeQuestionIndex === QUESTIONS.length - 1 ? "Gửi khảo sát" : "Tiếp theo";
+  previousQuestionButton.querySelector("img").alt = activeQuestionIndex === 0 ? "Quay lại" : "Câu trước";
+  nextQuestionButton.querySelector("img").alt = activeQuestionIndex === QUESTIONS.length - 1 ? "Gửi khảo sát" : "Tiếp theo";
+
+  const illustrationIndex = Math.min(activeQuestionIndex + 1, 5);
+  quizBottomIllustration.src = `./assets/img/question-${illustrationIndex}-bottom-img.png`;
 }
 
 function getActiveQuestion() {

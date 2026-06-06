@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Survey App</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="./styles.css?v=20260606-04" />
+    <link rel="stylesheet" href="./styles.css?v=20260606-05" />
   </head>
   <body>
     <main class="app-shell">
@@ -74,21 +74,34 @@
       </section>
 
       <section class="screen" id="screen-quiz" aria-labelledby="quiz-title">
-        <div class="screen-header">
-          <div class="dummy-logo" aria-label="Logo mẫu"><span>LOGO</span></div>
+        <div class="screen-header quiz-header">
+          <img class="quiz-logo" src="./assets/img/main-logo.png" alt="Logo chương trình" />
           <h1 id="quiz-title">Bộ câu hỏi khảo sát</h1>
         </div>
 
-        <div class="quiz-progress" aria-live="polite">
-          <span id="question-counter">Câu 1/6</span>
+        <div class="quiz-content">
+          <div class="quiz-question-frame">
+            <div class="question-label-holder" aria-live="polite">
+              <img src="./assets/img/question-label-holder.png" alt="" />
+              <span id="question-counter">Câu 1/6</span>
+            </div>
+            <div class="question-list" id="question-list"></div>
+          </div>
+          <p class="field-error question-error" id="question-error"></p>
+
+          <div class="sticky-actions quiz-actions">
+            <button class="image-button quiz-nav-button" type="button" id="previous-question">
+              <img src="./assets/img/btn-go-back.png" alt="Quay lại" />
+            </button>
+            <button class="image-button quiz-nav-button" type="button" id="next-question">
+              <img src="./assets/img/btn-continue.png" alt="Tiếp theo" />
+            </button>
+          </div>
         </div>
 
-        <div class="question-list" id="question-list"></div>
-        <p class="field-error question-error" id="question-error"></p>
-
-        <div class="sticky-actions">
-          <button class="secondary-button" type="button" id="previous-question">Quay lại</button>
-          <button class="primary-button" type="button" id="next-question">Tiếp theo</button>
+        <div class="quiz-bottom-decor" aria-hidden="true">
+          <img class="quiz-bottom-bg" src="./assets/img/bottom-decor.png" alt="" />
+          <img class="quiz-bottom-illustration" id="quiz-bottom-illustration" src="./assets/img/question-1-bottom-img.png" alt="" />
         </div>
       </section>
 
@@ -130,9 +143,9 @@
       <button class="primary-button" type="button" id="confirm-anonymous">Đã hiểu &amp; Tiếp tục khảo sát</button>
     </dialog>
 
-    <script src="./firebase-config.js?v=20260606-04"></script>
-    <script src="./questions.js?v=20260606-04"></script>
-    <script src="./survey-store.js?v=20260606-04"></script>
-    <script src="./app.js?v=20260606-04"></script>
+    <script src="./firebase-config.js?v=20260606-05"></script>
+    <script src="./questions.js?v=20260606-05"></script>
+    <script src="./survey-store.js?v=20260606-05"></script>
+    <script src="./app.js?v=20260606-05"></script>
   </body>
 </html>
