@@ -544,7 +544,7 @@ h2 {
 #screen-quiz {
   position: relative;
   height: 200vw;
-  min-height: 100dvh;
+  min-height: auto;
   max-height: 225vw;
   padding-bottom: 0;
   overflow: hidden;
@@ -1606,11 +1606,6 @@ th {
   .quiz-header {
     padding-top: 120px;
     margin-bottom: 12px;
-  }
-
-  #screen-quiz {
-    height: 190vw;
-    min-height: 100dvh;
   }
 
   .quiz-logo,
