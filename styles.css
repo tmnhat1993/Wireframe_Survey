@@ -45,6 +45,12 @@ input {
   font: inherit;
 }
 
+input::placeholder,
+textarea::placeholder {
+  color: rgba(0, 0, 0, 0.35);
+  opacity: 1;
+}
+
 button {
   cursor: pointer;
 }
@@ -256,12 +262,6 @@ button {
   font-size: 15px;
   font-weight: 500;
   text-transform: uppercase;
-}
-
-.info-form .field input::placeholder,
-.admin-login-form .field input::placeholder {
-  color: var(--text-on-white);
-  opacity: 1;
 }
 
 .choice-field {
@@ -543,6 +543,7 @@ h2 {
 
 #screen-quiz {
   position: relative;
+  height: 200vw;
   min-height: 100dvh;
   max-height: 225vw;
   padding-bottom: 0;
@@ -721,11 +722,6 @@ h2 {
   font-size: 14px;
   line-height: 1.45;
   resize: none;
-}
-
-.other-answer::placeholder {
-  color: rgba(16, 7, 160, 0.68);
-  font-family: inherit;
 }
 
 .sticky-actions {
@@ -1613,8 +1609,8 @@ th {
   }
 
   #screen-quiz {
+    height: 190vw;
     min-height: 100dvh;
-    max-height: 100vh;
   }
 
   .quiz-logo,
