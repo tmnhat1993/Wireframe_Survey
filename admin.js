@@ -400,10 +400,10 @@ function renderAdmin() {
   updateFilterSummary();
 }
 
-async function loadResponses() {
+async function loadResponses(options = {}) {
   try {
     await requireFirebaseAdmin();
-    allResponses = await listSurveyResponses();
+    allResponses = await listSurveyResponses(options);
     applyDateFilter();
   } catch (error) {
     showAdminLogin(error.message);
@@ -533,8 +533,15 @@ confirmDeleteDataButton.addEventListener("click", async () => {
     await requireFirebaseAdmin();
     const result = await deleteAllSurveyResponses();
     deleteDataDialog.close();
-    await loadResponses();
-    filterSummary.textContent = `Đã xóa ${result.count} bản ghi khảo sát.`;
+    await loadResponses({ fromServer: true });
+    currentParticipantsPage = 1;
+
+    if (result.count === 0) {
+      filterSummary.textContent = "Không có dữ liệu để xóa trên server.";
+      return;
+    }
+
+    filterSummary.textContent = `Đã xóa ${result.count} kết quả khảo sát.`;
   } catch (error) {
     filterSummary.textContent = `Không thể xóa dữ liệu: ${error.message}`;
   } finally {

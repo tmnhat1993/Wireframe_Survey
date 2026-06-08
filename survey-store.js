@@ -86,19 +86,21 @@ async function saveSurveyResponse(payload) {
   return { id: localRecord.id, provider: "local", mode: "create" };
 }
 
-async function listSurveyResponses() {
+async function listSurveyResponses(options = {}) {
   const firebaseClient = await getFirebaseClient();
 
   if (firebaseClient) {
     const { db, firestoreModule } = firebaseClient;
-    const querySnapshot = await firestoreModule.getDocs(
-      firestoreModule.query(
-        firestoreModule.collection(db, "surveyResponses"),
-        firestoreModule.orderBy("createdAt", "desc")
-      )
+    const responsesQuery = firestoreModule.query(
+      firestoreModule.collection(db, "surveyResponses"),
+      firestoreModule.orderBy("createdAt", "desc")
     );
+    const snapshot =
+      options.fromServer && typeof firestoreModule.getDocsFromServer === "function"
+        ? await firestoreModule.getDocsFromServer(responsesQuery)
+        : await firestoreModule.getDocs(responsesQuery);
 
-    return querySnapshot.docs.map((doc) => {
+    return snapshot.docs.map((doc) => {
       const data = doc.data();
       const createdAt = data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt;
 
@@ -158,16 +160,38 @@ async function deleteAllSurveyResponses() {
   const firebaseClient = await getFirebaseClient();
 
   if (firebaseClient) {
+    const user = await waitForAuthReady();
+
+    if (!user) {
+      throw new Error("Cần đăng nhập Admin để xóa dữ liệu.");
+    }
+
     const { db, firestoreModule } = firebaseClient;
-    const snapshot = await firestoreModule.getDocs(firestoreModule.collection(db, "surveyResponses"));
+    const collectionRef = firestoreModule.collection(db, "surveyResponses");
+    const snapshot =
+      typeof firestoreModule.getDocsFromServer === "function"
+        ? await firestoreModule.getDocsFromServer(collectionRef)
+        : await firestoreModule.getDocs(collectionRef);
     const docs = snapshot.docs;
 
     for (let index = 0; index < docs.length; index += 500) {
       const batch = firestoreModule.writeBatch(db);
+
       docs.slice(index, index + 500).forEach((docSnapshot) => {
         batch.delete(docSnapshot.ref);
       });
-      await batch.commit();
+
+      try {
+        await batch.commit();
+      } catch (error) {
+        if (error.code === "permission-denied") {
+          throw new Error(
+            "Không có quyền xóa dữ liệu trên Firebase. Hãy deploy Firestore rules (allow delete khi đã đăng nhập)."
+          );
+        }
+
+        throw error;
+      }
     }
 
     return { provider: "firebase", count: docs.length };
