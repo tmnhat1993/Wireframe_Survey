@@ -204,6 +204,44 @@ async function deleteAllSurveyResponses() {
   return { provider: "local", count };
 }
 
+async function deleteSurveyResponse(responseId) {
+  if (!responseId) {
+    throw new Error("Không xác định được kết quả cần xóa.");
+  }
+
+  const firebaseClient = await getFirebaseClient();
+
+  if (firebaseClient) {
+    const user = await waitForAuthReady();
+
+    if (!user) {
+      throw new Error("Cần đăng nhập Admin để xóa dữ liệu.");
+    }
+
+    const { db, firestoreModule } = firebaseClient;
+    const docRef = firestoreModule.doc(db, "surveyResponses", responseId);
+
+    try {
+      await firestoreModule.deleteDoc(docRef);
+    } catch (error) {
+      if (error.code === "permission-denied") {
+        throw new Error(
+          "Không có quyền xóa dữ liệu trên Firebase. Hãy deploy Firestore rules (allow delete khi đã đăng nhập)."
+        );
+      }
+
+      throw error;
+    }
+
+    return { provider: "firebase", id: responseId };
+  }
+
+  const responses = readLocalResponses().filter((item) => item.id !== responseId);
+  writeLocalResponses(responses);
+
+  return { provider: "local", id: responseId };
+}
+
 function getStoreMode() {
   return hasFirebaseConfig() ? "firebase" : "local";
 }
@@ -215,6 +253,7 @@ window.SurveyStore = {
   signInAdmin,
   signOutAdmin,
   getCurrentAdminUser,
-  deleteAllSurveyResponses
+  deleteAllSurveyResponses,
+  deleteSurveyResponse
 };
 })();

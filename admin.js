@@ -1,6 +1,6 @@
 (function () {
 const { QUESTIONS, getOptionLabel, getQuestionText } = window.SurveyQuestions;
-const { getStoreMode, listSurveyResponses, signInAdmin, signOutAdmin, getCurrentAdminUser, deleteAllSurveyResponses } = window.SurveyStore;
+const { getStoreMode, listSurveyResponses, signInAdmin, signOutAdmin, getCurrentAdminUser, deleteAllSurveyResponses, deleteSurveyResponse } = window.SurveyStore;
 
 const ADMIN_SESSION_KEY = "survey-admin-session-expires-at";
 const ADMIN_SESSION_DURATION_MS = 24 * 60 * 60 * 1000;
@@ -20,6 +20,10 @@ const exportCsvButton = document.querySelector("#export-csv");
 const exportCsvBar = document.querySelector("#export-csv-bar");
 const deleteAllDataButton = document.querySelector("#delete-all-data");
 const deleteDataDialog = document.querySelector("#delete-data-dialog");
+const deleteRecordDialog = document.querySelector("#delete-record-dialog");
+const deleteRecordMessage = document.querySelector("#delete-record-message");
+const cancelDeleteRecordButton = document.querySelector("#cancel-delete-record");
+const confirmDeleteRecordButton = document.querySelector("#confirm-delete-record");
 const cancelDeleteDataButton = document.querySelector("#cancel-delete-data");
 const confirmDeleteDataButton = document.querySelector("#confirm-delete-data");
 const dateFilterForm = document.querySelector("#date-filter-form");
@@ -35,6 +39,7 @@ const participantsListSummary = document.querySelector("#participants-list-summa
 let allResponses = [];
 let filteredResponses = [];
 let currentParticipantsPage = 1;
+let pendingDeleteResponse = null;
 const PARTICIPANTS_PAGE_SIZE = 10;
 
 function saveAdminSession() {
@@ -375,6 +380,9 @@ function renderParticipantsTable() {
         <td>${escapeHtml(formatParticipantProfile(response))}</td>
         <td>${response.consentGiven ? "Có" : "Không"}</td>
         <td>${escapeHtml(answerLabels)}</td>
+        <td class="row-actions-cell">
+          <button class="row-delete-button" type="button" data-response-id="${escapeHtml(response.id)}" aria-label="Xóa kết quả">Xóa</button>
+        </td>
       </tr>
     `;
   }).join("");
@@ -382,7 +390,7 @@ function renderParticipantsTable() {
   if (!pageResponses.length) {
     participantsTableBody.innerHTML = `
       <tr>
-        <td colspan="5">Không có dữ liệu trong phạm vi lọc.</td>
+        <td colspan="6">Không có dữ liệu trong phạm vi lọc.</td>
       </tr>
     `;
   }
@@ -391,6 +399,13 @@ function renderParticipantsTable() {
   participantsListSummary.textContent = `Tổng cộng ${filteredResponses.length} kết quả · ${PARTICIPANTS_PAGE_SIZE} kết quả / trang`;
   participantsPrevPageButton.disabled = currentParticipantsPage <= 1;
   participantsNextPageButton.disabled = currentParticipantsPage >= pageCount;
+}
+
+function openDeleteRecordDialog(response) {
+  pendingDeleteResponse = response;
+  const participantName = response.participant?.fullName || "Ẩn danh";
+  deleteRecordMessage.textContent = `Bạn có chắc muốn xóa kết quả của "${participantName}"? Hành động này không thể hoàn tác.`;
+  deleteRecordDialog.showModal();
 }
 
 function renderAdmin() {
@@ -522,6 +537,50 @@ deleteAllDataButton.addEventListener("click", () => {
   deleteDataDialog.showModal();
 });
 
+participantsTableBody.addEventListener("click", (event) => {
+  const deleteButton = event.target.closest(".row-delete-button");
+
+  if (!deleteButton) {
+    return;
+  }
+
+  const responseId = deleteButton.dataset.responseId;
+  const response = allResponses.find((item) => item.id === responseId);
+
+  if (!response) {
+    filterSummary.textContent = "Không tìm thấy kết quả cần xóa.";
+    return;
+  }
+
+  openDeleteRecordDialog(response);
+});
+
+cancelDeleteRecordButton.addEventListener("click", () => {
+  pendingDeleteResponse = null;
+  deleteRecordDialog.close();
+});
+
+confirmDeleteRecordButton.addEventListener("click", async () => {
+  if (!pendingDeleteResponse) {
+    return;
+  }
+
+  confirmDeleteRecordButton.disabled = true;
+
+  try {
+    await requireFirebaseAdmin();
+    await deleteSurveyResponse(pendingDeleteResponse.id);
+    deleteRecordDialog.close();
+    pendingDeleteResponse = null;
+    await loadResponses({ fromServer: true });
+    filterSummary.textContent = "Đã xóa 1 kết quả khảo sát.";
+  } catch (error) {
+    filterSummary.textContent = `Không thể xóa dữ liệu: ${error.message}`;
+  } finally {
+    confirmDeleteRecordButton.disabled = false;
+  }
+});
+
 cancelDeleteDataButton.addEventListener("click", () => {
   deleteDataDialog.close();
 });
@@ -550,6 +609,11 @@ confirmDeleteDataButton.addEventListener("click", async () => {
 });
 
 closeDialogOnBackdropClick(deleteDataDialog);
+closeDialogOnBackdropClick(deleteRecordDialog);
+
+deleteRecordDialog.addEventListener("close", () => {
+  pendingDeleteResponse = null;
+});
 
 window.addEventListener("scroll", updateExportCsvFixed, { passive: true });
 window.addEventListener("resize", updateExportCsvFixed);

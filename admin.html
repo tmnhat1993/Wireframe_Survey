@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Survey Admin</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="./styles.css?v=20260606-58" />
+    <link rel="stylesheet" href="./styles.css?v=20260606-60" />
   </head>
   <body>
     <main class="app-shell admin-shell">
@@ -100,6 +100,7 @@
                     <th>Giới tính / Tuổi</th>
                     <th>Chia sẻ</th>
                     <th>Trả lời</th>
+                    <th>Xóa</th>
                   </tr>
                 </thead>
                 <tbody id="participants-table-body"></tbody>
@@ -124,6 +125,17 @@
       </section>
     </main>
 
+    <dialog class="policy-dialog" id="delete-record-dialog" aria-labelledby="delete-record-title">
+      <h2 id="delete-record-title">Xác nhận xóa kết quả</h2>
+      <div class="anonymous-copy">
+        <p id="delete-record-message">Bạn có chắc muốn xóa kết quả này? Hành động này không thể hoàn tác.</p>
+      </div>
+      <div class="admin-dialog-actions">
+        <button class="secondary-button" type="button" id="cancel-delete-record">Hủy</button>
+        <button class="danger-button" type="button" id="confirm-delete-record">Xóa</button>
+      </div>
+    </dialog>
+
     <dialog class="policy-dialog" id="delete-data-dialog" aria-labelledby="delete-data-title">
       <h2 id="delete-data-title">Xác nhận xóa dữ liệu</h2>
       <div class="anonymous-copy">
@@ -137,7 +149,7 @@
 
     <script src="./firebase-config.js?v=20260606-07"></script>
     <script src="./questions.js?v=20260606-07"></script>
-    <script src="./survey-store.js?v=20260606-04"></script>
-    <script src="./admin.js?v=20260606-07"></script>
+    <script src="./survey-store.js?v=20260606-05"></script>
+    <script src="./admin.js?v=20260606-08"></script>
   </body>
 </html>
